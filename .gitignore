@@ -361,3 +361,20 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+.env
+
+# Vim swap files
+*.swp
+*.swo
+
+# Vim backup files
+*~
+
+# Vim views & sessions
+Session.vim
+.vimrc
+[._]*.un~
+
+# NetRW history
+.netrwhist
