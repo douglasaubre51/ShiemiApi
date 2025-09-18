@@ -9,5 +9,10 @@ namespace ShiemiApi.Data
 
         public DbSet<Project> Projects { get; set; }
 
+        public DbSet<Channel> Channels { get; set; }
+
+        public DbSet<Room> Rooms { get; set; }
+
+        public DbSet<Message> Message { get; set; }
     }
 }

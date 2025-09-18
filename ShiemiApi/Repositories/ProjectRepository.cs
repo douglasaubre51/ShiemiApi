@@ -30,6 +30,11 @@ namespace ShiemiApi.Repositories
             => _context.Projects
             .ToList();
 
+        public List<Project> GetAllByUserId(int UserId)
+            => _context.Projects
+			.Where(e => e.UserId == UserId)
+			.ToList();
+
         // Update
 
         public void Update(Project project)
@@ -42,10 +47,14 @@ namespace ShiemiApi.Repositories
 
         // Delete
 
-        public void Delete(Project project)
+        public void Remove(int Id)
         {
-            _context.Projects
-            .Remove(project);
+            var project = _context.Projects
+            .Where(p => p.Id == Id)
+			.Single();
+			
+			_context.Projects
+			.Remove(project);
 
             Save();
         }
