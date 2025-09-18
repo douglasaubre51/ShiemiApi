@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
-using ShiemiApi.Data;
-using ShiemiApi.Repositories;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Load Environment variables.

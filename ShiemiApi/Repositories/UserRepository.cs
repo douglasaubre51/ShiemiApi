@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-
-using ShiemiApi.Models;
-using ShiemiApi.Data;
-
 namespace ShiemiApi.Repositories
 {
 

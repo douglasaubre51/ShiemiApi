@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
-using ShiemiApi.Models;
-
 namespace ShiemiApi.Data
 {
 

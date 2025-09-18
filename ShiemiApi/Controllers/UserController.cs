@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
-using ShiemiApi.Repositories;
-using ShiemiApi.Models;
-
 namespace ShiemiApi.Controllers
 {
 
