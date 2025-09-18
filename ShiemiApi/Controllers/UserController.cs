@@ -55,5 +55,20 @@ namespace ShiemiApi.Controllers
                 return Results.BadRequest();
             }
         }
+
+        [HttpDelete("/remove/{Id}")]
+        public IResult Update(int Id)
+        {
+            try
+            {
+                _userRepo.Remove(Id);
+                return Results.Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("RemoveUser error: " + ex.Message);
+                return Results.BadRequest();
+            }
+        }
     }
 }
