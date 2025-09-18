@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-
-using ShiemiApi.Models;
-using ShiemiApi.Data;
-
 namespace ShiemiApi.Repositories
 {
 
@@ -47,10 +42,14 @@ namespace ShiemiApi.Repositories
 
         // Delete
 
-        public void Delete(User user)
+        public void Remove(int id)
         {
-            _context.Users
-            .Remove(user);
+            var user = _context.Users
+			.Where(u => u.Id == id)
+			.Single();
+
+			_context.Users
+			.Remove(user);
 
             Save();
         }

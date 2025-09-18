@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
-using ShiemiApi.Repositories;
-using ShiemiApi.Models;
-
 namespace ShiemiApi.Controllers
 {
 
@@ -57,6 +52,21 @@ namespace ShiemiApi.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("UpdateUser error: " + ex.Message);
+                return Results.BadRequest();
+            }
+        }
+
+        [HttpDelete("/remove/{Id}")]
+        public IResult Update(int Id)
+        {
+            try
+            {
+                _userRepo.Remove(Id);
+                return Results.Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("RemoveUser error: " + ex.Message);
                 return Results.BadRequest();
             }
         }
