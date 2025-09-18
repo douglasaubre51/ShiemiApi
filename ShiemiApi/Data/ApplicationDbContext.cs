@@ -14,5 +14,13 @@ namespace ShiemiApi.Data
         public DbSet<Room> Rooms { get; set; }
 
         public DbSet<Message> Message { get; set; }
+
+
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			builder.Entity<User>()
+				.HasIndex(u => u.Email)
+				.IsUnique();
+		}
     }
 }
