@@ -22,13 +22,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(conn_string, ServerVersion.AutoDetect(conn_string))
 );
 
+builder.Services.AddSignalR();
+
+// Add service to DI container
+
 builder.Services.AddScoped<UserRepository>();
 
 builder.Services.AddScoped<ProjectRepository>();
 
+builder.Services.AddSingleton<UserStorageService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+// Add SignalR Endpoints
+
+app.MapHub<MessageHub>("/hubs/message-hub");
 
 app.MapControllers();
 

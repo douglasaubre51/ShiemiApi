@@ -1,9 +1,7 @@
-namespace ShiemiApi.Models{
-
-	public class Message{
-		
-		public int Id { get; set; }
-		
+namespace ShiemiApi.Dtos
+{
+	public class MessageDto
+	{
 		public string? Text { get; set; }
 
 		public string? Voice { get; set; }
@@ -14,10 +12,8 @@ namespace ShiemiApi.Models{
 
 		public DateTime CreatedAt { get; set; }
 
-		public User Sender { get; set; }
+		public int UserId { get; set; }
 
-		public Channel? Channel { get; set; }
-
-		public Room? Room { get; set; }
+		public int ChannelId { get; set; }
 	}
 }

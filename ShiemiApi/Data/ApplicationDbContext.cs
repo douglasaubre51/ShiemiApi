@@ -13,7 +13,7 @@ namespace ShiemiApi.Data
 
         public DbSet<Room> Rooms { get; set; }
 
-        public DbSet<Message> Message { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
 
 		protected override void OnModelCreating(ModelBuilder builder)
