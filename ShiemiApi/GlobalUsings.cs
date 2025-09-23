@@ -2,8 +2,9 @@ global using System.Collections.Generic;
 
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.AspNetCore.SignalR;
 
 global using ShiemiApi.Repositories;
 global using ShiemiApi.Models;
 global using ShiemiApi.Data;
-
+global using ShiemiApi.Hubs;
