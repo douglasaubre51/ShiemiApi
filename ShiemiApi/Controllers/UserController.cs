@@ -41,6 +41,32 @@ namespace ShiemiApi.Controllers
             }
         }
 
+        [HttpGet("/get-user/id/{UserId}")]
+        public IResult GetUserId(string UserId)
+        {
+            try
+            {
+                var dbUser = _userRepo.GetByUserId(UserId);
+                if (dbUser is null)
+                    return Results.BadRequest();
+
+		CreateUserDto dto = new ()
+		{
+		    FirstName = dbUser.FirstName,
+			      LastName = dbUser.LastName,
+			      Email = dbUser.Email,
+			      Id = dbUser.UserId
+		};
+
+                return Results.Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GetUser error: " + ex.Message);
+                return Results.InternalServerError();
+            }
+        }
+
         [HttpPut("/update-user/{Id}")]
         public IResult UpdateUser(int Id, User user)
         {

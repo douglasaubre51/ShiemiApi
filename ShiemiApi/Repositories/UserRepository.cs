@@ -47,6 +47,11 @@ public class UserRepository(ApplicationDbContext context)
     .Where(u => u.Id == id)
     .SingleOrDefault();
 
+    public User GetByUserId(string id)
+    => _context.Users
+    .Where(u => u.UserId == id)
+    .SingleOrDefault();
+
     public List<User> GetAll()
     => _context.Users
     .ToList();
