@@ -42,7 +42,7 @@ namespace ShiemiApi.Controllers
         }
 
         [HttpPut("/update-user/{Id}")]
-        public IResult UpdateUser(int Id,User user)
+        public IResult UpdateUser(int Id, User user)
         {
             try
             {

@@ -43,10 +43,10 @@ namespace ShiemiApi.Repositories
         {
             var channel = _context.Channels
             .Where(p => p.Id == Id)
-			.Single();
-			
-			_context.Channels
-			.Remove(channel);
+            .Single();
+
+            _context.Channels
+            .Remove(channel);
 
             Save();
         }

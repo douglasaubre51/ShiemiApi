@@ -1,23 +1,25 @@
-namespace ShiemiApi.Models{
+namespace ShiemiApi.Models
+{
 
-	public class Message{
-		
-		public int Id { get; set; }
-		
-		public string? Text { get; set; }
+    public class Message
+    {
 
-		public string? Voice { get; set; }
+        public int Id { get; set; }
 
-		public string? Video { get; set; }
+        public string? Text { get; set; }
 
-		public string? Photo { get; set; }
+        public string? Voice { get; set; }
 
-		public DateTime CreatedAt { get; set; }
+        public string? Video { get; set; }
 
-		public User Sender { get; set; }
+        public string? Photo { get; set; }
 
-		public Channel? Channel { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-		public Room? Room { get; set; }
-	}
+        public User User { get; set; } = new User();
+
+        public Channel? Channel { get; set; }
+
+        public Room? Room { get; set; }
+    }
 }

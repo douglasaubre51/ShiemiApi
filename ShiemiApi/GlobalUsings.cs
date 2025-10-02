@@ -6,5 +6,7 @@ global using Microsoft.AspNetCore.SignalR;
 
 global using ShiemiApi.Repositories;
 global using ShiemiApi.Models;
+global using ShiemiApi.Dtos;
 global using ShiemiApi.Data;
 global using ShiemiApi.Hubs;
+global using ShiemiApi.Services;

@@ -16,11 +16,11 @@ namespace ShiemiApi.Data
         public DbSet<Message> Messages { get; set; }
 
 
-		protected override void OnModelCreating(ModelBuilder builder)
-		{
-			builder.Entity<User>()
-				.HasIndex(u => u.Email)
-				.IsUnique();
-		}
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+        }
     }
 }

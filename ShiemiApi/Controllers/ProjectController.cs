@@ -7,7 +7,7 @@ namespace ShiemiApi.Controllers
 
         private readonly ProjectRepository _projectRepo = projectRepo;
 
-		// Create
+        // Create
 
         [HttpPost("/create-project")]
         public IResult CreateProject(Project project)
@@ -24,7 +24,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-		// Read
+        // Read
 
         [HttpGet("/get-project/all")]
         public IResult GetAll()
@@ -80,10 +80,10 @@ namespace ShiemiApi.Controllers
             }
         }
 
-		// Update
+        // Update
 
         [HttpPut("/update-project/{Id}")]
-        public IResult UpdateProject(int Id,Project project)
+        public IResult UpdateProject(int Id, Project project)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-		// Remove
+        // Remove
 
         [HttpDelete("/remove-project/{Id}")]
         public IResult RemoveProject(int Id)

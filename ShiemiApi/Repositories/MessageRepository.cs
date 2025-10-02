@@ -27,10 +27,10 @@ namespace ShiemiApi.Repositories
             => _context.Messages
             .ToList();
 
-		public List<Message> GetAllByChannelId(int channelId)
-			=> _context.Messages
-			.Where(m => m.Channel.Id == channelId)
-			.ToList();
+        public List<Message> GetAllByChannelId(int channelId)
+            => _context.Messages
+            .Where(m => m.Channel.Id == channelId)
+            .ToList();
 
         // Update
 
@@ -48,10 +48,10 @@ namespace ShiemiApi.Repositories
         {
             var message = _context.Messages
             .Where(p => p.Id == Id)
-			.Single();
-			
-			_context.Messages
-			.Remove(message);
+            .Single();
+
+            _context.Messages
+            .Remove(message);
 
             Save();
         }
