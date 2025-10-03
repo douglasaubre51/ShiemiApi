@@ -9,7 +9,7 @@ namespace ShiemiApi.Controllers
 
         // Create
 
-        [HttpPost("/create-project")]
+        [HttpPost]
         public IResult CreateProject(Project project)
         {
             try
@@ -26,7 +26,7 @@ namespace ShiemiApi.Controllers
 
         // Read
 
-        [HttpGet("/get-project/all")]
+        [HttpGet("all")]
         public IResult GetAll()
         {
             try
@@ -44,7 +44,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpGet("/get-project/{UserId}/all")]
+        [HttpGet("all/{UserId}")]
         public IResult GetAllByUserId(int UserId)
         {
             try
@@ -62,7 +62,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpGet("/get-project/{ProjectId}")]
+        [HttpGet("{ProjectId}")]
         public IResult GetById(int ProjectId)
         {
             try
@@ -82,7 +82,7 @@ namespace ShiemiApi.Controllers
 
         // Update
 
-        [HttpPut("/update-project/{Id}")]
+        [HttpPut("{Id}")]
         public IResult UpdateProject(int Id, Project project)
         {
             try
@@ -99,7 +99,7 @@ namespace ShiemiApi.Controllers
 
         // Remove
 
-        [HttpDelete("/remove-project/{Id}")]
+        [HttpDelete("{Id}")]
         public IResult RemoveProject(int Id)
         {
             try

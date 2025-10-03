@@ -16,7 +16,7 @@ namespace ShiemiApi.Controllers
         private readonly UserRepository _userRepo = userRepo;
         private readonly IHubContext<MessageHub> _messageHub = messageHub;
 
-        [HttpPost("/create")]
+        [HttpPost]
         public IResult CreateMessage(MessageDto dto)
         {
             try
@@ -50,7 +50,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpGet("/get-message/{Id}")]
+        [HttpGet("{Id}")]
         public IResult GetMessage(int Id)
         {
             try
@@ -68,7 +68,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpPut("/update-message/{Id}")]
+        [HttpPut("{Id}")]
         public IResult UpdateMessage(int Id, Message message)
         {
             try
@@ -83,7 +83,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpDelete("/remove-message/{Id}")]
+        [HttpDelete("{Id}")]
         public IResult RemoveMessage(int Id)
         {
             try

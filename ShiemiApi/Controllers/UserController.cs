@@ -8,7 +8,7 @@ namespace ShiemiApi.Controllers
 
         private readonly UserRepository _userRepo = userRepo;
 
-        [HttpPost("/create-user")]
+        [HttpPost]
         public IResult CreateUser(User user)
         {
             try
@@ -23,7 +23,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpGet("/get-user/{Id}")]
+        [HttpGet("{Id}")]
         public IResult GetUser(int Id)
         {
             try
@@ -41,8 +41,8 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpGet("/get-user/id/{UserId}")]
-        public IResult GetUserId(string UserId)
+        [HttpGet("id/{UserId}")]
+        public IResult GetUserById(string UserId)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpPut("/update-user/{Id}")]
+        [HttpPut("{Id}")]
         public IResult UpdateUser(int Id, User user)
         {
             try
@@ -82,7 +82,7 @@ namespace ShiemiApi.Controllers
             }
         }
 
-        [HttpDelete("/remove-user/{Id}")]
+        [HttpDelete("{Id}")]
         public IResult RemoveUser(int Id)
         {
             try
