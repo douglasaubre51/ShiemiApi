@@ -58,11 +58,12 @@ public class ProjectController(ProjectRepository projectRepo)
     {
 	try
 	{
+	    Console.WriteLine($"user id: {UserId}");
 	    var dbProjects = _projectRepo.GetAllByUserId(UserId);
 	    if (dbProjects is null)
 		return Results.NotFound();
 
-	    return Results.Ok(dbProjects);
+	    return Results.Ok( new { Projects = dbProjects } );
 	}
 	catch (Exception ex)
 	{
