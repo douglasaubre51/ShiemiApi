@@ -9,11 +9,19 @@ public class UserController(UserRepository userRepo)
 
     // CREATE
     [HttpPost]
-    public IResult CreateUser(User user)
+    public IResult CreateUser(CreateUserDto dto)
     {
 	try
 	{
+	    User user = new ()
+	    {
+		UserId = dto.Id,
+		FirstName = dto.FirstName,
+		LastName = dto.LastName,
+		Email = dto.Email
+	    };
 	    _userRepo.Create(user);
+
 	    return Results.Ok();
 	}
 	catch (Exception ex)
