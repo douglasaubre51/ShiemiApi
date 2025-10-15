@@ -8,7 +8,12 @@ public class Project
     public string Title { get; set; }
     public string ShortDesc { get; set; }
     public string Description { get; set; }
+
+    public string? Profile { get; set; }
+
     public DateOnly CreatedAt { get; set; }
+
+    public decimal Cost { get; set; }
 
     public int? UserId { get; set; }
     public User? User { get; set; }

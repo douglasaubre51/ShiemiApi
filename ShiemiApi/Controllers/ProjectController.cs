@@ -44,7 +44,7 @@ public class ProjectController(ProjectRepository projectRepo)
 	    if (dbProjects is null)
 		return Results.NotFound();
 
-	    return Results.Ok(dbProjects);
+	    return Results.Ok( new { Projects = dbProjects } );
 	}
 	catch (Exception ex)
 	{
