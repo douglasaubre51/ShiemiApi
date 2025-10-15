@@ -15,7 +15,7 @@ public class Project
 
     public decimal Cost { get; set; }
 
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
     public User? User { get; set; }
 
     public Channel? Channel { get; set; }

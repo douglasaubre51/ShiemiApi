@@ -9,7 +9,7 @@ public class Room
     public User Tenant { get; set; }
 
     public int ProjectId { get; set; }
-    public Project Project { get; set; }
+    public Project? Project { get; set; }
 
-    public List<Message> Messages { get; set; }
+    public List<Message>? Messages { get; set; }
 }

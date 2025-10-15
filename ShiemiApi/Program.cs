@@ -31,6 +31,8 @@ builder.Services.AddScoped<ProjectRepository>();
 
 builder.Services.AddSingleton<UserStorageService>();
 
+builder.Services.AddScoped<RoomService>();
+
 
 var app = builder.Build();
 

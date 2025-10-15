@@ -19,6 +19,17 @@ namespace ShiemiApi.Repositories
             Save();
         }
 
+	public void AddPrivateRoom(Room room, int id)
+	{
+	    Project project = _context.Projects
+		.Where( p => p.Id == id )
+		.Single();
+
+	    project.PrivateRooms.Add(room);
+
+	    Save();
+	}
+
         // Read
 
         public Project GetById(int id)
