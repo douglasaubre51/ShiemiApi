@@ -1,8 +1,10 @@
+using DotNetEnv;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Load Environment variables.
 
-DotNetEnv.Env.Load();
+Env.Load();
 
 // Add services to the container.
 
@@ -19,7 +21,7 @@ builder.Services.AddSwaggerGen();
 var conn_string = Environment.GetEnvironmentVariable("SHIEMI_DB_STRING");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(conn_string, ServerVersion.AutoDetect(conn_string))
-    );
+);
 
 builder.Services.AddSignalR();
 
@@ -48,9 +50,9 @@ app.MapGet("/", () => Results.Ok("Shiemi says hello!"));
 
 // Create Client Account via WAGURI
 app.MapPost("/api/user/create",
-           (
-     [FromServices] UserRepository _userRepo,
-     [FromBody] CreateUserDto dto
+    (
+        [FromServices] UserRepository _userRepo,
+        [FromBody] CreateUserDto dto
     ) =>
     {
         try

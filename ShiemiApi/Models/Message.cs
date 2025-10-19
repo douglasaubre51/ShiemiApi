@@ -2,7 +2,6 @@ namespace ShiemiApi.Models;
 
 public class Message
 {
-
     public int Id { get; set; }
 
     public string? Text { get; set; }
@@ -15,7 +14,7 @@ public class Message
 
     public DateTime CreatedAt { get; set; }
 
-    public User User { get; set; } = new User();
+    public User User { get; set; } = new();
 
     public Channel? Channel { get; set; }
 

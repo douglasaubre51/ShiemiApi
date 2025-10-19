@@ -2,18 +2,18 @@ namespace ShiemiApi.Repositories;
 
 public class UserRepository(ApplicationDbContext context)
 {
-
     private readonly ApplicationDbContext _context = context;
 
     public void Save()
-    => _context.SaveChanges();
+    {
+        _context.SaveChanges();
+    }
 
     // Create
 
     public void Create(User user)
     {
-        _context.Users.
-            Add(user);
+        _context.Users.Add(user);
 
         Save();
     }
@@ -43,18 +43,24 @@ public class UserRepository(ApplicationDbContext context)
     // Read
 
     public User GetById(int id)
-    => _context.Users
-    .Where(u => u.Id == id)
-    .SingleOrDefault();
+    {
+        return _context.Users
+            .Where(u => u.Id == id)
+            .SingleOrDefault();
+    }
 
     public User GetByUserId(string id)
-    => _context.Users
-    .Where(u => u.UserId == id)
-    .SingleOrDefault();
+    {
+        return _context.Users
+            .Where(u => u.UserId == id)
+            .SingleOrDefault();
+    }
 
     public List<User> GetAll()
-    => _context.Users
-    .ToList();
+    {
+        return _context.Users
+            .ToList();
+    }
 
     // Update
 

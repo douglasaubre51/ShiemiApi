@@ -1,60 +1,66 @@
-namespace ShiemiApi.Repositories
+namespace ShiemiApi.Repositories;
+
+public class MessageRepository(ApplicationDbContext context)
 {
-    public class MessageRepository(ApplicationDbContext context)
+    private readonly ApplicationDbContext _context = context;
+
+    public void Save()
     {
-        private readonly ApplicationDbContext _context = context;
+        _context.SaveChanges();
+    }
 
-        public void Save()
-            => _context.SaveChanges();
+    // Create
 
-        // Create
-
-        public void Create(Message message)
-        {
-            _context.Messages
+    public void Create(Message message)
+    {
+        _context.Messages
             .Add(message);
-            Save();
-        }
+        Save();
+    }
 
-        // Read
+    // Read
 
-        public Message GetById(int id)
-            => _context.Messages
+    public Message GetById(int id)
+    {
+        return _context.Messages
             .Where(u => u.Id == id)
             .SingleOrDefault();
+    }
 
-        public List<Message> GetAll()
-            => _context.Messages
+    public List<Message> GetAll()
+    {
+        return _context.Messages
             .ToList();
+    }
 
-        public List<Message> GetAllByChannelId(int channelId)
-            => _context.Messages
+    public List<Message> GetAllByChannelId(int channelId)
+    {
+        return _context.Messages
             .Where(m => m.Channel.Id == channelId)
             .ToList();
+    }
 
-        // Update
+    // Update
 
-        public void Update(Message message)
-        {
-            _context.Messages
+    public void Update(Message message)
+    {
+        _context.Messages
             .Update(message);
 
-            Save();
-        }
+        Save();
+    }
 
-        // Delete
+    // Delete
 
-        public void Remove(int Id)
-        {
-            var message = _context.Messages
+    public void Remove(int Id)
+    {
+        var message = _context.Messages
             .Where(p => p.Id == Id)
             .Single();
 
-            _context.Messages
+        _context.Messages
             .Remove(message);
 
-            Save();
-        }
+        Save();
     }
 }
-

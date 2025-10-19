@@ -1,55 +1,59 @@
-namespace ShiemiApi.Repositories
+namespace ShiemiApi.Repositories;
+
+public class ChannelRepository(ApplicationDbContext context)
 {
-    public class ChannelRepository(ApplicationDbContext context)
+    private readonly ApplicationDbContext _context = context;
+
+    public void Save()
     {
-        private readonly ApplicationDbContext _context = context;
+        _context.SaveChanges();
+    }
 
-        public void Save()
-            => _context.SaveChanges();
+    // Create
 
-        // Create
-
-        public void Create(Channel channel)
-        {
-            _context.Channels
+    public void Create(Channel channel)
+    {
+        _context.Channels
             .Add(channel);
-            Save();
-        }
+        Save();
+    }
 
-        // Read
+    // Read
 
-        public Channel GetById(int id)
-            => _context.Channels
+    public Channel GetById(int id)
+    {
+        return _context.Channels
             .Where(u => u.Id == id)
             .SingleOrDefault();
+    }
 
-        public List<Channel> GetAll()
-            => _context.Channels
+    public List<Channel> GetAll()
+    {
+        return _context.Channels
             .ToList();
+    }
 
-        // Update
+    // Update
 
-        public void Update(Channel channel)
-        {
-            _context.Channels
+    public void Update(Channel channel)
+    {
+        _context.Channels
             .Update(channel);
 
-            Save();
-        }
+        Save();
+    }
 
-        // Delete
+    // Delete
 
-        public void Remove(int Id)
-        {
-            var channel = _context.Channels
+    public void Remove(int Id)
+    {
+        var channel = _context.Channels
             .Where(p => p.Id == Id)
             .Single();
 
-            _context.Channels
+        _context.Channels
             .Remove(channel);
 
-            Save();
-        }
+        Save();
     }
 }
-

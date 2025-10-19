@@ -1,74 +1,78 @@
-namespace ShiemiApi.Repositories
+namespace ShiemiApi.Repositories;
+
+public class ProjectRepository(ApplicationDbContext context)
 {
+    private readonly ApplicationDbContext _context = context;
 
-    public class ProjectRepository(ApplicationDbContext context)
+    public void Save()
     {
+        _context.SaveChanges();
+    }
 
-        private readonly ApplicationDbContext _context = context;
+    // Create
 
-        public void Save()
-            => _context.SaveChanges();
-
-        // Create
-
-        public void Create(Project project)
-        {
-            _context.Projects
+    public void Create(Project project)
+    {
+        _context.Projects
             .Add(project);
 
-            Save();
-        }
+        Save();
+    }
 
-	public void AddPrivateRoom(Room room, int id)
-	{
-	    Project project = _context.Projects
-		.Where( p => p.Id == id )
-		.Single();
+    public void AddPrivateRoom(Room room, int id)
+    {
+        var project = _context.Projects
+            .Where(p => p.Id == id)
+            .Single();
 
-	    project.PrivateRooms.Add(room);
+        project.PrivateRooms.Add(room);
 
-	    Save();
-	}
+        Save();
+    }
 
-        // Read
+    // Read
 
-        public Project GetById(int id)
-            => _context.Projects
+    public Project GetById(int id)
+    {
+        return _context.Projects
             .Where(u => u.Id == id)
             .SingleOrDefault();
+    }
 
-        public List<Project> GetAll()
-            => _context.Projects
+    public List<Project> GetAll()
+    {
+        return _context.Projects
             .ToList();
+    }
 
-        public List<Project> GetAllByUserId(int UserId)
-            => _context.Projects
+    public List<Project> GetAllByUserId(int UserId)
+    {
+        return _context.Projects
             .Where(e => e.UserId == UserId)
             .ToList();
+    }
 
-        // Update
+    // Update
 
-        public void Update(Project project)
-        {
-            _context.Projects
+    public void Update(Project project)
+    {
+        _context.Projects
             .Update(project);
 
-            Save();
-        }
+        Save();
+    }
 
-        // Delete
+    // Delete
 
-        public void Remove(int Id)
-        {
-            var project = _context.Projects
+    public void Remove(int Id)
+    {
+        var project = _context.Projects
             .Where(p => p.Id == Id)
             .Single();
 
-            _context.Projects
+        _context.Projects
             .Remove(project);
 
-            Save();
-        }
+        Save();
     }
 }
-
