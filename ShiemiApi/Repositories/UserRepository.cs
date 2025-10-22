@@ -4,17 +4,13 @@ public class UserRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
-    public void Save()
-    {
-        _context.SaveChanges();
-    }
+    private void Save()
+        => _context.SaveChanges();
 
     // Create
-
     public void Create(User user)
     {
         _context.Users.Add(user);
-
         Save();
     }
 
@@ -33,56 +29,33 @@ public class UserRepository(ApplicationDbContext context)
 
             _context.Users.Add(userDto);
             Save();
-
             return true;
         }
-
         return false;
     }
 
     // Read
-
     public User GetById(int id)
-    {
-        return _context.Users
-            .Where(u => u.Id == id)
-            .SingleOrDefault();
-    }
+        => _context.Users.Single(u=>u.Id==id);
 
     public User GetByUserId(string id)
-    {
-        return _context.Users
-            .Where(u => u.UserId == id)
-            .SingleOrDefault();
-    }
+        => _context.Users.Single(u=>u.UserId==id);
 
     public List<User> GetAll()
-    {
-        return _context.Users
-            .ToList();
-    }
+        => _context.Users.ToList();
 
     // Update
-
     public void Update(User user)
     {
-        _context.Users
-            .Update(user);
-
+        _context.Users.Update(user);
         Save();
     }
 
     // Delete
-
     public void Remove(int id)
     {
-        var user = _context.Users
-            .Where(u => u.Id == id)
-            .Single();
-
-        _context.Users
-            .Remove(user);
-
+        var user = _context.Users.Single(u=>u.Id==id);
+        _context.Users.Remove(user);
         Save();
     }
 }

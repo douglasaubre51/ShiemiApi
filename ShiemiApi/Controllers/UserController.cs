@@ -37,10 +37,7 @@ public class UserController(UserRepository userRepo)
         try
         {
             var dbUser = _userRepo.GetById(Id);
-            if (dbUser is null)
-                return Results.NotFound();
-
-            return Results.Ok(dbUser);
+            return dbUser is null ? Results.NotFound() : Results.Ok(dbUser);
         }
         catch (Exception ex)
         {
@@ -90,6 +87,19 @@ public class UserController(UserRepository userRepo)
         {
             Console.WriteLine($"GetUserId error: {ex.Message}");
             return Results.InternalServerError();
+        }
+    }
+
+    [HttpGet("/all")]
+    public IResult GetAll()
+    {
+        try
+        {
+            return Results.Ok(_userRepo.GetAll());
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
         }
     }
 
