@@ -1,48 +1,47 @@
 using DotNetEnv;
+using ShiemiApi.Storage.HubStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Load Environment variables.
-
 Env.Load();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // Add Swagger.
-
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
-// Configure Database pipeline.
+// SignalR
+builder.Services.AddSignalR();
 
+// Configure Database pipeline.
 var conn_string = Environment.GetEnvironmentVariable("SHIEMI_DB_STRING");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(conn_string, ServerVersion.AutoDetect(conn_string))
 );
 
-builder.Services.AddSignalR();
-
-// Add service to DI container
-
+// Add repositories 
 builder.Services.AddScoped<UserRepository>();
-
 builder.Services.AddScoped<ProjectRepository>();
+builder.Services.AddScoped<RoomRepository>();
+builder.Services.AddScoped<MessageRepository>();
+builder.Services.AddScoped<ChannelRepository>();
 
+// Add storage 
 builder.Services.AddSingleton<UserStorageService>();
+builder.Services.AddSingleton<UserStorage>();
 
+// Add services
+// scoped
 builder.Services.AddScoped<RoomService>();
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 // Add SignalR Endpoints
-
-app.MapHub<MessageHub>("/hubs/message-hub");
+app.MapHub<RoomHub>("/hubs/room");
 
 app.MapControllers();
 
@@ -58,10 +57,7 @@ app.MapPost("/api/user/create",
         try
         {
             var result = _userRepo.Create(dto);
-            if (result is false)
-                return Results.BadRequest();
-
-            return Results.Ok();
+            return result == true ? Results.Ok() : Results.BadRequest();
         }
         catch (Exception ex)
         {
@@ -71,9 +67,7 @@ app.MapPost("/api/user/create",
     });
 
 // Use Swagger
-
 app.UseSwagger();
-
 app.UseSwaggerUI();
 
 app.Run();

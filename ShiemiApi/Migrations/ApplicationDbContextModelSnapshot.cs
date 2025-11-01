@@ -31,14 +31,13 @@ namespace ShiemiApi.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("PinnedMessage")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Profile")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ProjectId")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -217,7 +216,9 @@ namespace ShiemiApi.Migrations
                 {
                     b.HasOne("ShiemiApi.Models.Project", "Project")
                         .WithOne("Channel")
-                        .HasForeignKey("ShiemiApi.Models.Channel", "ProjectId");
+                        .HasForeignKey("ShiemiApi.Models.Channel", "ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Project");
                 });

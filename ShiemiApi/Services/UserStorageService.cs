@@ -2,20 +2,12 @@ namespace ShiemiApi.Services;
 
 public class UserStorageService
 {
-    private Dictionary<string, string> Connections { get; } = [];
+    private Dictionary<int, string> Connections { get; } = [];
 
-    public string GetConnectionId(string userId)
-    {
-        return Connections[userId];
-    }
-
-    public void SetConnectionId(string userId, string connectionId)
-    {
-        Connections.Add(userId, connectionId);
-    }
-
-    public void RemoveConnectionId(string userId)
-    {
-        Connections.Remove(userId);
-    }
+    public Dictionary<int, string> GetConnectionDict() => Connections;
+    public string GetConnectionId(int userId) => Connections[userId];
+    public void SetConnectionId(int userId, string connectionId)
+        => Connections.Add(userId, connectionId);
+    public void RemoveConnectionId(int userId)
+        => Connections.Remove(userId);
 }

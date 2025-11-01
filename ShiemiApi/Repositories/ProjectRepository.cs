@@ -22,8 +22,11 @@ public class ProjectRepository(ApplicationDbContext context)
     public void AddPrivateRoom(Room room, int id)
     {
         var project = _context.Projects
+            .Include(p=>p.PrivateRooms)
             .Where(p => p.Id == id)
             .Single();
+
+        Console.WriteLine($"project selected!: {project.Title}");
 
         project.PrivateRooms.Add(room);
 
@@ -34,9 +37,9 @@ public class ProjectRepository(ApplicationDbContext context)
 
     public Project GetById(int id)
     {
-        return _context.Projects
-            .Where(u => u.Id == id)
-            .SingleOrDefault();
+        return _context.Projects.Include(p => p.PrivateRooms)
+            .ThenInclude(t=>t.Tenant)
+            .Single(u => u.Id == id);
     }
 
     public List<Project> GetAll()

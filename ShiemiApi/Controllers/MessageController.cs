@@ -6,11 +6,11 @@ public class MessageController(
     MessageRepository messageRepo,
     ChannelRepository channelRepo,
     UserRepository userRepo,
-    IHubContext<MessageHub> messageHub
+    IHubContext<RoomHub> messageHub
 )
 {
     private readonly ChannelRepository _channelRepo = channelRepo;
-    private readonly IHubContext<MessageHub> _messageHub = messageHub;
+    private readonly IHubContext<RoomHub> _messageHub = messageHub;
     private readonly MessageRepository _messageRepo = messageRepo;
     private readonly UserRepository _userRepo = userRepo;
 
