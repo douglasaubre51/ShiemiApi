@@ -35,11 +35,11 @@ public class UserRepository(ApplicationDbContext context)
     }
 
     // Read
-    public User GetById(int id)
-        => _context.Users.Single(u=>u.Id==id);
+    public User? GetById(int id)
+        => _context.Users.SingleOrDefault(u=>u.Id==id);
 
-    public User GetByUserId(string id)
-        => _context.Users.Single(u=>u.UserId==id);
+    public User? GetByUserId(string id)
+        => _context.Users.SingleOrDefault(u=>u.UserId==id);
 
     public List<User> GetAll()
         => _context.Users.ToList();
