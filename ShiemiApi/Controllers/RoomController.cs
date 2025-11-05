@@ -76,4 +76,18 @@ public class RoomController(
         }
         catch(Exception ex){ return Results.InternalServerError(ex.Message);}
     }
+
+    [HttpGet("Private/{id}/messages")]
+    public  IResult GetAllMessagesById(int id)
+    {
+        try
+        {
+             var dtoCollection = _roomRepository.GetAllMessagesByRoomId(id);
+             return dtoCollection is null ? Results.BadRequest("empty list!") : Results.Ok(dtoCollection);
+        }
+        catch (Exception ex)
+        {
+            return Results.InternalServerError(ex.Message);
+        }
+    }
 }

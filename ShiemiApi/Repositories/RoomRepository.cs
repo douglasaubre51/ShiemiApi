@@ -28,6 +28,9 @@ public class RoomRepository(ApplicationDbContext context)
             .Include(m => m.Messages)!.ThenInclude(message => message.User)
             .Single(r=>r.Id == id)
             .Messages;
+        if (messages is null)
+            return null;
+        
         List<MessageDto> dtoCollection = new ();
         foreach (var m in messages!)
         {
