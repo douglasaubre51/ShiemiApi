@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace ShiemiApi.Models;
 
 public class Message

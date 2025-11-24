@@ -5,77 +5,47 @@ public class ProjectRepository(ApplicationDbContext context)
     private readonly ApplicationDbContext _context = context;
 
     public void Save()
-    {
-        _context.SaveChanges();
-    }
-
-    // Create
+        => _context.SaveChanges();
 
     public void Create(Project project)
     {
-        _context.Projects
-            .Add(project);
-
+        _context.Projects.Add(project);
         Save();
     }
 
     public void AddPrivateRoom(Room room, int id)
     {
         var project = _context.Projects
-            .Include(p=>p.PrivateRooms)
-            .Where(p => p.Id == id)
-            .Single();
-
-        Console.WriteLine($"project selected!: {project.Title}");
+            .Include(p => p.PrivateRooms)
+            .SingleOrDefault(p => p.Id == id);
+        if (project!.PrivateRooms is null)
+            return;
 
         project.PrivateRooms.Add(room);
-
         Save();
     }
 
-    // Read
-
-    public Project GetById(int id)
-    {
-        return _context.Projects.Include(p => p.PrivateRooms)
-            .ThenInclude(t=>t.Tenant)
-            .Single(u => u.Id == id);
-    }
-
+    public Project? GetById(int id)
+        => _context.Projects.Include(p => p.PrivateRooms)
+            .SingleOrDefault(p => p.Id == id);
     public List<Project> GetAll()
-    {
-        return _context.Projects
-            .ToList();
-    }
-
+        => [.. _context.Projects];
     public List<Project> GetAllByUserId(int UserId)
-    {
-        return _context.Projects
-            .Where(e => e.UserId == UserId)
-            .ToList();
-    }
-
-    // Update
+        => _context.Projects.Include(u => u.User)
+        .Include(c => c.Channel)
+        .Where(e => e.UserId == UserId)
+        .ToList();
 
     public void Update(Project project)
     {
-        _context.Projects
-            .Update(project);
-
+        _context.Projects.Update(project);
         Save();
     }
 
-    // Delete
-
     public void Remove(int Id)
     {
-        var project = _context.Projects
-            .Where(p => p.Id == Id)
-            .Single();
-
-        _context.Projects
-            .Remove(project);
-
+        var project = _context.Projects.Single(p => p.Id == Id);
+        _context.Projects.Remove(project);
         Save();
     }
 }

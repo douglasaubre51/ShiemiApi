@@ -13,9 +13,7 @@ public class RoomHub(
     private readonly UserStorage _userStorage = userStorage;
 
     public override async Task OnConnectedAsync()
-    {
-        Console.WriteLine("client connected: " + Context.ConnectionId);
-    }
+        => Console.WriteLine("client connected: " + Context.ConnectionId);
 
     public override Task OnDisconnectedAsync(Exception? ex)
     {

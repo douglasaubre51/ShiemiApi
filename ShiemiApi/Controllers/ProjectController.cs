@@ -1,12 +1,18 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using ShiemiApi.Utility;
+
 namespace ShiemiApi.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class ProjectController(ProjectRepository projectRepo)
+public class ProjectController(
+    ProjectRepository projectRepo,
+    MapperUtility mapper
+    )
 {
     private readonly ProjectRepository _projectRepo = projectRepo;
-
-    // Create
+    private readonly MapperUtility _mapper = mapper;
 
     [HttpPost]
     public IResult CreateProject(ProjectDto dto)
@@ -30,8 +36,6 @@ public class ProjectController(ProjectRepository projectRepo)
             return Results.BadRequest();
         }
     }
-
-    // Read
 
     [HttpGet("all")]
     public IResult GetAll()
@@ -57,16 +61,19 @@ public class ProjectController(ProjectRepository projectRepo)
         try
         {
             Console.WriteLine($"user id: {UserId}");
-            var dbProjects = _projectRepo.GetAllByUserId(UserId);
-            if (dbProjects is null)
-                return Results.NotFound();
+            var projects = _projectRepo.GetAllByUserId(UserId);
+            if (projects is null)
+                return Results.BadRequest();
 
-            return Results.Ok(new { Projects = dbProjects });
+            // convert projects to projectDtos
+            var map = _mapper.Get<Project, ProjectDto>();
+            List<ProjectDto> dtos = map.Map<List<ProjectDto>>(projects);
+            return Results.Ok(new { Projects = dtos });
         }
         catch (Exception ex)
         {
             Console.WriteLine("GetAllProjectByUserId error: " + ex.Message);
-            return Results.BadRequest();
+            return Results.InternalServerError(ex.Message);
         }
     }
 
@@ -88,8 +95,6 @@ public class ProjectController(ProjectRepository projectRepo)
         }
     }
 
-    // Update
-
     [HttpPut("{Id}")]
     public IResult UpdateProject(int Id, Project project)
     {
@@ -104,8 +109,6 @@ public class ProjectController(ProjectRepository projectRepo)
             return Results.BadRequest();
         }
     }
-
-    // Remove
 
     [HttpDelete("{Id}")]
     public IResult RemoveProject(int Id)

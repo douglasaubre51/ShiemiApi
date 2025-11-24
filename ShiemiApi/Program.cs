@@ -1,5 +1,6 @@
 using DotNetEnv;
 using ShiemiApi.Storage.HubStorage;
+using ShiemiApi.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,16 +33,23 @@ builder.Services.AddScoped<ChannelRepository>();
 // Add storage 
 builder.Services.AddSingleton<UserStorageService>();
 builder.Services.AddSingleton<UserStorage>();
+builder.Services.AddSingleton<ProjectStorage>();
 
 // Add services
 // scoped
 builder.Services.AddScoped<RoomService>();
 
+//singleton
+builder.Services.AddSingleton<MapperUtility>();
+
 
 var app = builder.Build();
 
+
 // Add SignalR Endpoints
 app.MapHub<RoomHub>("/hubs/room");
+app.MapHub<ChannelHub>("/hubs/channel");
+app.MapHub<ProjectHub>("/hubs/project");
 
 app.MapControllers();
 
@@ -51,7 +59,7 @@ app.MapGet("/", () => Results.Ok("Shiemi says hello!"));
 app.MapPost("/api/user/create",
     (
         [FromServices] UserRepository _userRepo,
-        [FromBody] CreateUserDto dto
+        [FromBody] UserDto dto
     ) =>
     {
         try

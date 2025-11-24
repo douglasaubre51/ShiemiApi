@@ -4,19 +4,14 @@ public class UserRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
-    private void Save()
-        => _context.SaveChanges();
-
-    // Create
     public void Create(User user)
     {
         _context.Users.Add(user);
         Save();
     }
-
-    public bool Create(CreateUserDto dto)
+    public bool Create(UserDto dto)
     {
-        var result = _context.Users.Any(u => u.UserId == dto.Id);
+        var result = _context.Users.Any(u => u.UserId == dto.UserId);
         if (result is false)
         {
             User userDto = new()
@@ -24,7 +19,8 @@ public class UserRepository(ApplicationDbContext context)
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
-                UserId = dto.Id
+                UserId = dto.UserId,
+                Id = dto.Id
             };
 
             _context.Users.Add(userDto);
@@ -34,28 +30,25 @@ public class UserRepository(ApplicationDbContext context)
         return false;
     }
 
-    // Read
     public User? GetById(int id)
-        => _context.Users.SingleOrDefault(u=>u.Id==id);
+        => _context.Users.SingleOrDefault(u => u.Id == id);
 
     public User? GetByUserId(string id)
-        => _context.Users.SingleOrDefault(u=>u.UserId==id);
-
+        => _context.Users.SingleOrDefault(u => u.UserId == id);
     public List<User> GetAll()
-        => _context.Users.ToList();
+        => [.. _context.Users];
 
-    // Update
     public void Update(User user)
     {
         _context.Users.Update(user);
         Save();
     }
-
-    // Delete
     public void Remove(int id)
     {
-        var user = _context.Users.Single(u=>u.Id==id);
+        var user = _context.Users.Single(u => u.Id == id);
         _context.Users.Remove(user);
         Save();
     }
+    private void Save()
+        => _context.SaveChanges();
 }

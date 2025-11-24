@@ -1,23 +1,29 @@
+using ShiemiApi.Utility;
+
 namespace ShiemiApi.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class UserController(UserRepository userRepo)
+public class UserController(
+    UserRepository userRepo,
+    MapperUtility mapper
+)
 {
     private readonly UserRepository _userRepo = userRepo;
-    
+    private readonly MapperUtility _mapper = mapper;
+
     [HttpPost]
-    public IResult CreateUser(CreateUserDto dto)
+    public IResult CreateUser(UserDto dto)
     {
         try
         {
-            var dbUser = _userRepo.GetAll().SingleOrDefault(u => u.UserId == dto.Id);
+            var dbUser = _userRepo.GetAll().SingleOrDefault(u => u.UserId == dto.UserId);
             if (dbUser is not null)
                 return Results.Ok();
-            
+
             User user = new()
             {
-                UserId = dto.Id,
+                UserId = dto.UserId,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email
@@ -25,9 +31,12 @@ public class UserController(UserRepository userRepo)
             _userRepo.Create(user);
             return Results.Ok();
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
+        }
     }
-    
+
     [HttpGet("{id}")]
     public IResult GetUser(int id)
     {
@@ -48,13 +57,8 @@ public class UserController(UserRepository userRepo)
             if (dbUser is null)
                 return Results.BadRequest();
 
-            CreateUserDto dto = new()
-            {
-                FirstName = dbUser.FirstName,
-                LastName = dbUser.LastName,
-                Email = dbUser.Email,
-                Id = dbUser.UserId
-            };
+            var mapper = _mapper.Get<User, UserDto>();
+            UserDto dto = mapper.Map<UserDto>(dbUser);
             return Results.Ok(dto);
         }
         catch (Exception ex) { return Results.BadRequest(ex); }
@@ -78,9 +82,13 @@ public class UserController(UserRepository userRepo)
     public IResult GetAll()
     {
         try
-        { return Results.Ok(_userRepo.GetAll()); }
+        {
+            return Results.Ok(_userRepo.GetAll());
+        }
         catch (Exception ex)
-        { return Results.BadRequest(ex.Message); }
+        {
+            return Results.BadRequest(ex.Message);
+        }
     }
 
     [HttpPut]
@@ -91,9 +99,12 @@ public class UserController(UserRepository userRepo)
             _userRepo.Update(user);
             return Results.Ok();
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
+        }
     }
-    
+
     [HttpDelete("{Id}")]
     public IResult RemoveUser(int Id)
     {
@@ -102,6 +113,9 @@ public class UserController(UserRepository userRepo)
             _userRepo.Remove(Id);
             return Results.Ok();
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
+        }
     }
 }

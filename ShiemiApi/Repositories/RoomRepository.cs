@@ -5,9 +5,7 @@ public class RoomRepository(ApplicationDbContext context)
     private readonly ApplicationDbContext _context = context;
 
     private void Save()
-    {
-        _context.SaveChanges();
-    }
+        => _context.SaveChanges();
 
     public void Create(Room room)
     {
@@ -16,25 +14,16 @@ public class RoomRepository(ApplicationDbContext context)
     }
 
     public Room GetById(int id)
-    {
-        return _context.Rooms.Single(r => r.Id == id);
-    }
-
+        => _context.Rooms.Single(r => r.Id == id);
     public List<Room> GetAll()
-    {
-        return _context.Rooms.ToList();
-    }
-
+        => [.. _context.Rooms];
     public List<Room> GetAllByUserId(int id)
-    {
-        return _context.Rooms
+        => _context.Rooms
             .Include(u => u.Owner)
             .Include(u => u.Tenant)
             .Include(m => m.Messages)
             .Where(u => u.Owner.Id == id)
             .ToList();
-    }
-
     public List<MessageDto>? GetAllMessagesByRoomId(int id)
     {
         var messages = _context.Rooms
