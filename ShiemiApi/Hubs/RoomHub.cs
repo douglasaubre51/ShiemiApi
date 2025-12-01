@@ -46,13 +46,25 @@ public class RoomHub(
 
     public async Task SendChat(MessageDto dto)
     {
-        Console.WriteLine($"sending chat: roomid: {dto.RoomId}");
+        var user = _userRepo.GetById(dto.UserId) ?? null!;
+        var room = _roomRepo.GetById(dto.RoomId) ?? null!;
+        if (user is null)
+        {
+            Console.WriteLine("SendChat: error: user is null");
+            return;
+        }
+        if (room is null)
+        {
+            Console.WriteLine("SendChat: error: room is null");
+            return;
+        }
+
         Message message = new()
         {
             Text = dto.Text,
             CreatedAt = dto.CreatedAt,
-            User = _userRepo.GetById(dto.UserId),
-            Room = _roomRepo.GetById(dto.RoomId)
+            User = user,
+            Room = room
         };
         _roomRepo.AddMessage(dto.RoomId, message);
 

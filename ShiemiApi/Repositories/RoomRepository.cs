@@ -13,8 +13,8 @@ public class RoomRepository(ApplicationDbContext context)
         Save();
     }
 
-    public Room GetById(int id)
-        => _context.Rooms.Single(r => r.Id == id);
+    public Room? GetById(int id)
+        => _context.Rooms.SingleOrDefault(r => r.Id == id);
     public List<Room> GetAll()
         => [.. _context.Rooms];
     public List<Room> GetAllByUserId(int id)
