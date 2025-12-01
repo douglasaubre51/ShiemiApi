@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using ShiemiApi.Utility;
 
 namespace ShiemiApi.Controllers;
@@ -13,17 +14,17 @@ public class UserController(
     private readonly MapperUtility _mapper = mapper;
 
     [HttpPost]
-    public IResult CreateUser(UserDto dto)
+    public IResult CreateUser(CreateUserDto dto)
     {
         try
         {
-            var dbUser = _userRepo.GetAll().SingleOrDefault(u => u.UserId == dto.UserId);
+            var dbUser = _userRepo.GetAll().SingleOrDefault(u => u.UserId == dto.Id);
             if (dbUser is not null)
                 return Results.Ok();
 
             User user = new()
             {
-                UserId = dto.UserId,
+                UserId = dto.Id,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email
@@ -33,6 +34,7 @@ public class UserController(
         }
         catch (Exception ex)
         {
+            Debug.WriteLine(ex.Message);
             return Results.BadRequest(ex);
         }
     }

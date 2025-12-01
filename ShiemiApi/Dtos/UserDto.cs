@@ -7,3 +7,10 @@ public record UserDto(
     string LastName,
     string Email
 );
+
+public record CreateUserDto(
+    string Id,
+    string FirstName,
+    string LastName,
+    string Email
+);
