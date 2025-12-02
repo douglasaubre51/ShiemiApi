@@ -19,20 +19,18 @@ public class RoomHub(
     {
         _userStorage.Remove(Context.ConnectionId);
         Console.WriteLine("client disconnected: " + Context.ConnectionId);
-
         return base.OnDisconnectedAsync(ex);
     }
 
+
     // hub methods
+
     public async Task SetUserIdAndRoom(int userId, int roomId)
     {
         try
         {
             _userStorage.Add(userId, Context.ConnectionId);
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
-            Console.WriteLine($"creating room: {roomId}");
-
-            // send all chats
             await Clients.Caller.SendAsync(
                 "LoadChat",
                 _roomRepo.GetAllMessagesByRoomId(roomId)
@@ -44,10 +42,11 @@ public class RoomHub(
         }
     }
 
+
     public async Task SendChat(MessageDto dto)
     {
-        var user = _userRepo.GetById(dto.UserId) ?? null!;
-        var room = _roomRepo.GetById(dto.RoomId) ?? null!;
+        var user = _userRepo.GetById(dto.UserId);
+        var room = _roomRepo.GetById(dto.RoomId);
         if (user is null)
         {
             Console.WriteLine("SendChat: error: user is null");
@@ -67,9 +66,9 @@ public class RoomHub(
             Room = room
         };
         _roomRepo.AddMessage(dto.RoomId, message);
+        Console.WriteLine($"{message.User.Id}: {message.Text}");
 
-        // broadcast new message
-        await Clients.Groups(dto.RoomId.ToString())
+        await Clients.Groups(dto.RoomId.ToString())  // broadcast message !
             .SendAsync("UpdateChat", dto);
     }
 }
