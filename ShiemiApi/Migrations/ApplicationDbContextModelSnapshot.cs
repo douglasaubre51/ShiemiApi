@@ -31,6 +31,7 @@ namespace ShiemiApi.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("PinnedMessage")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Profile")
@@ -67,21 +68,25 @@ namespace ShiemiApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Photo")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Video")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Voice")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -104,6 +109,7 @@ namespace ShiemiApi.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.PrimitiveCollection<string>("BlockList")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<decimal>("Cost")
@@ -117,6 +123,7 @@ namespace ShiemiApi.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Profile")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ShortDesc")
@@ -131,6 +138,7 @@ namespace ShiemiApi.Migrations
                         .HasColumnType("int");
 
                     b.PrimitiveCollection<string>("UserList")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -194,13 +202,18 @@ namespace ShiemiApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long?>("Phone")
+                    b.Property<long>("Phone")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Profile")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -235,9 +248,7 @@ namespace ShiemiApi.Migrations
 
                     b.HasOne("ShiemiApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Channel");
 

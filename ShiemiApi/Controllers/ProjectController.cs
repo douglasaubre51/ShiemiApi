@@ -1,7 +1,3 @@
-using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using ShiemiApi.Utility;
-
 namespace ShiemiApi.Controllers;
 
 [ApiController]

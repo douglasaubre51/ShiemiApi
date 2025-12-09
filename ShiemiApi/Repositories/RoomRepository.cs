@@ -27,7 +27,7 @@ public class RoomRepository(ApplicationDbContext context)
     public List<MessageDto>? GetAllMessagesByRoomId(int id)
     {
         var messages = _context.Rooms
-            .Include(m => m.Messages)!.ThenInclude(message => message.User)
+            .Include(m => m.Messages).ThenInclude(message => message.User)
             .Single(r => r.Id == id)
             .Messages;
         if (messages is null)

@@ -12,8 +12,8 @@ using ShiemiApi.Data;
 namespace ShiemiApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251014150110_+Cost +Profile props in Project.cs")]
-    partial class CostProfilepropsinProjectcs
+    [Migration("20251209092505_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace ShiemiApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ProjectId")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -71,21 +71,25 @@ namespace ShiemiApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Photo")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Video")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Voice")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -108,6 +112,7 @@ namespace ShiemiApi.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.PrimitiveCollection<string>("BlockList")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<decimal>("Cost")
@@ -121,6 +126,7 @@ namespace ShiemiApi.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Profile")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ShortDesc")
@@ -131,10 +137,11 @@ namespace ShiemiApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.PrimitiveCollection<string>("UserList")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -198,13 +205,18 @@ namespace ShiemiApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long?>("Phone")
+                    b.Property<long>("Phone")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Profile")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -220,7 +232,9 @@ namespace ShiemiApi.Migrations
                 {
                     b.HasOne("ShiemiApi.Models.Project", "Project")
                         .WithOne("Channel")
-                        .HasForeignKey("ShiemiApi.Models.Channel", "ProjectId");
+                        .HasForeignKey("ShiemiApi.Models.Channel", "ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Project");
                 });
@@ -237,9 +251,7 @@ namespace ShiemiApi.Migrations
 
                     b.HasOne("ShiemiApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Channel");
 
@@ -252,7 +264,9 @@ namespace ShiemiApi.Migrations
                 {
                     b.HasOne("ShiemiApi.Models.User", "User")
                         .WithMany("Projects")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
