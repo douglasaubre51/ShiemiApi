@@ -1,4 +1,6 @@
 global using System.Collections.Generic;
+global using System.Diagnostics;
+global using AutoMapper;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.EntityFrameworkCore;

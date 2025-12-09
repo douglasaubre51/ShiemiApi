@@ -39,9 +39,6 @@ builder.Services.AddSingleton<ProjectStorage>();
 // scoped
 builder.Services.AddScoped<RoomService>();
 
-//singleton
-builder.Services.AddSingleton<MapperUtility>();
-
 
 var app = builder.Build();
 

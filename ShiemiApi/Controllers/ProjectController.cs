@@ -3,12 +3,10 @@ namespace ShiemiApi.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class ProjectController(
-    ProjectRepository projectRepo,
-    MapperUtility mapper
-    )
+    ProjectRepository projectRepo
+)
 {
     private readonly ProjectRepository _projectRepo = projectRepo;
-    private readonly MapperUtility _mapper = mapper;
 
     [HttpPost]
     public IResult CreateProject(ProjectDto dto)
@@ -62,7 +60,7 @@ public class ProjectController(
                 return Results.BadRequest();
 
             // convert projects to projectDtos
-            var map = _mapper.Get<Project, ProjectDto>();
+            var map = MapperUtility.Get<Project, ProjectDto>();
             List<ProjectDto> dtos = map.Map<List<ProjectDto>>(projects);
             return Results.Ok(new { Projects = dtos });
         }
@@ -82,7 +80,10 @@ public class ProjectController(
             if (dbProject is null)
                 return Results.NotFound();
 
-            return Results.Ok(dbProject);
+            Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
+            ProjectDto dto = mapper.Map<ProjectDto>(dbProject);
+
+            return Results.Ok(dto);
         }
         catch (Exception ex)
         {

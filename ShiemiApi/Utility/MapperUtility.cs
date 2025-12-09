@@ -2,9 +2,9 @@ using AutoMapper;
 
 namespace ShiemiApi.Utility;
 
-public class MapperUtility
+public static class MapperUtility
 {
-    public Mapper Get<TSource, TDest>()
+    public static Mapper Get<TSource, TDest>()
     {
         var config = new MapperConfiguration(cfg =>
             cfg.CreateMap<TSource, TDest>(),
