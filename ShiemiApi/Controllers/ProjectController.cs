@@ -40,7 +40,10 @@ public class ProjectController(
             if (dbProjects is null)
                 return Results.NotFound();
 
-            return Results.Ok(new { Projects = dbProjects });
+            Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
+            List<ProjectDto> dtos = mapper.Map<List<ProjectDto>>(dbProjects);
+
+            return Results.Ok(new { Projects = dtos });
         }
         catch (Exception ex)
         {
@@ -58,6 +61,12 @@ public class ProjectController(
             var projects = _projectRepo.GetAllByUserId(UserId);
             if (projects is null)
                 return Results.BadRequest(new { Message = "Empty projects !" });
+
+            List<Project> allProjects = _projectRepo.GetAll()
+                                                    .Where(u => u.UserList.Contains(UserId))
+                                                    .ToList();
+            allProjects.ForEach(p => Console.WriteLine($"Project Title: {p.Title}"));
+            projects.AddRange(allProjects);
 
             var map = MapperUtility.Get<Project, ProjectDto>();
             List<ProjectDto> dtos = map.Map<List<ProjectDto>>(projects);

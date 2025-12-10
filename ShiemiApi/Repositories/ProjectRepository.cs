@@ -4,9 +4,6 @@ public class ProjectRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
-    public void Save()
-        => _context.SaveChanges();
-
     public void Create(Project project)
     {
         _context.Projects.Add(project);
@@ -30,7 +27,8 @@ public class ProjectRepository(ApplicationDbContext context)
             .Include(c => c.Channel)
             .SingleOrDefault(p => p.Id == id);
     public List<Project> GetAll()
-        => [.. _context.Projects];
+        => _context.Projects.Include(c => c.Channel)
+                            .ToList();
     public List<Project> GetAllByUserId(int UserId)
         => _context.Projects.Include(u => u.User)
         .Include(c => c.Channel)
@@ -42,11 +40,14 @@ public class ProjectRepository(ApplicationDbContext context)
         _context.Projects.Update(project);
         Save();
     }
-
     public void Remove(int Id)
     {
         var project = _context.Projects.Single(p => p.Id == Id);
         _context.Projects.Remove(project);
         Save();
     }
+    public void Save()
+        => _context.SaveChanges();
+    public IQueryable<Project> GetQueryable()
+        => _context.Projects;
 }
