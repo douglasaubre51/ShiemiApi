@@ -57,11 +57,19 @@ public class ProjectController(
             Console.WriteLine($"user id: {UserId}");
             var projects = _projectRepo.GetAllByUserId(UserId);
             if (projects is null)
-                return Results.BadRequest();
+                return Results.BadRequest(new { Message = "Empty projects !" });
 
-            // convert projects to projectDtos
             var map = MapperUtility.Get<Project, ProjectDto>();
             List<ProjectDto> dtos = map.Map<List<ProjectDto>>(projects);
+
+            for (int i = 0; i < projects.Count; i++)
+            {
+                if (projects[i].Channel is null)
+                    continue;
+
+                dtos[i].ChannelId = projects[i].Channel!.Id;
+            }
+
             return Results.Ok(new { Projects = dtos });
         }
         catch (Exception ex)

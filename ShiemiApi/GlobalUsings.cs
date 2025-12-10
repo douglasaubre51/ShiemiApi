@@ -10,4 +10,5 @@ global using ShiemiApi.Hubs;
 global using ShiemiApi.Models;
 global using ShiemiApi.Repositories;
 global using ShiemiApi.Services;
+global using ShiemiApi.Storage.HubStorage;
 global using ShiemiApi.Utility;

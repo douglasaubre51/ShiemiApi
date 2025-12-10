@@ -48,19 +48,13 @@ public class RoomHub(
         var user = _userRepo.GetById(dto.UserId);
         var room = _roomRepo.GetById(dto.RoomId);
         if (user is null)
-        {
-            Console.WriteLine("SendChat: error: user is null");
             return;
-        }
         if (room is null)
-        {
-            Console.WriteLine("SendChat: error: room is null");
             return;
-        }
 
         Message message = new()
         {
-            Text = dto.Text,
+            Text = dto.Text!,
             CreatedAt = dto.CreatedAt,
             User = user,
             Room = room
