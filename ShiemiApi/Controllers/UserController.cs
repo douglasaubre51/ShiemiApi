@@ -1,64 +1,118 @@
-using Microsoft.AspNetCore.Mvc;
+namespace ShiemiApi.Controllers;
 
-using ShiemiApi.Repositories;
-using ShiemiApi.Models;
-
-namespace ShiemiApi.Controllers
+[ApiController]
+[Route("/api/[controller]")]
+public class UserController(
+    UserRepository userRepo
+)
 {
+    private readonly UserRepository _userRepo = userRepo;
 
-    [ApiController]
-    [Route("/api/[controller]")]
-    public class UserController(UserRepository userRepo)
+    [HttpPost]
+    public IResult CreateUser(CreateUserDto dto)
     {
-
-        private readonly UserRepository _userRepo = userRepo;
-
-        [HttpPost("/create")]
-        public IResult Create(User user)
+        try
         {
-            try
-            {
-                _userRepo.Create(user);
+            var dbUser = _userRepo.GetAll().SingleOrDefault(u => u.UserId == dto.Id);
+            if (dbUser is not null)
                 return Results.Ok();
-            }
-            catch (Exception ex)
+
+            User user = new()
             {
-                Console.WriteLine("CreateUser error: " + ex.Message);
-                return Results.BadRequest();
-            }
+                UserId = dto.Id,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email
+            };
+            _userRepo.Create(user);
+            return Results.Ok();
         }
-
-        [HttpGet("/get/{Id}")]
-        public IResult Get(int Id)
+        catch (Exception ex)
         {
-            try
-            {
-                var dbUser = _userRepo.GetById(Id);
-                if (dbUser is null)
-                    return Results.NotFound();
-
-                return Results.Ok(dbUser);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("GetUser error: " + ex.Message);
-                return Results.BadRequest();
-            }
+            Debug.WriteLine(ex.Message);
+            return Results.BadRequest(ex);
         }
+    }
 
-        [HttpPut("/update/{Id}")]
-        public IResult Update(int Id,User user)
+    [HttpGet("{id}")]
+    public IResult GetUser(int id)
+    {
+        try
         {
-            try
-            {
-                _userRepo.Update(user);
-                return Results.Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("UpdateUser error: " + ex.Message);
+            var dbUser = _userRepo.GetById(id);
+            return dbUser is null ? Results.BadRequest() : Results.Ok(dbUser);
+        }
+        catch (Exception ex) { return Results.BadRequest(ex); }
+    }
+
+    [HttpGet("id/{UserId}")]
+    public IResult GetUserById(string UserId)
+    {
+        try
+        {
+            var dbUser = _userRepo.GetByUserId(UserId);
+            if (dbUser is null)
                 return Results.BadRequest();
-            }
+
+            var mapper = MapperUtility.Get<User, UserDto>();
+            UserDto dto = mapper.Map<UserDto>(dbUser);
+            return Results.Ok(dto);
+        }
+        catch (Exception ex) { return Results.BadRequest(ex); }
+    }
+
+    [HttpGet("{userId}/id")]
+    public IResult GetUserId(string userId)
+    {
+        try
+        {
+            var user = _userRepo.GetByUserId(userId);
+            if (user is null)
+                return Results.BadRequest("user doesn't exist!");
+
+            return Results.Ok(new { user.Id });
+        }
+        catch (Exception ex) { return Results.BadRequest(ex); }
+    }
+
+    [HttpGet("/all")]
+    public IResult GetAll()
+    {
+        try
+        {
+            return Results.Ok(_userRepo.GetAll());
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    public IResult UpdateUser(User user)
+    {
+        try
+        {
+            _userRepo.Update(user);
+            return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
+        }
+    }
+
+    [HttpDelete("{Id}")]
+    public IResult RemoveUser(int Id)
+    {
+        try
+        {
+            _userRepo.Remove(Id);
+            return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
         }
     }
 }
