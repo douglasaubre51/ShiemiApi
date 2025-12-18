@@ -49,6 +49,8 @@ public class UserRepository(ApplicationDbContext context)
         _context.Users.Remove(user);
         Save();
     }
-    private void Save()
+    public void Save()
         => _context.SaveChanges();
+    public IQueryable<User> GetQueryable()
+        => _context.Users;
 }

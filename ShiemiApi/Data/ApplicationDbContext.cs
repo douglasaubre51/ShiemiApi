@@ -9,6 +9,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Dev> Devs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

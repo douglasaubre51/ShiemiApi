@@ -3,9 +3,10 @@ namespace ShiemiApi.Models;
 public class User
 {
     public int Id { get; set; }
-    public string UserId { get; set; } = string.Empty;
+    public Dev? Dev { get; set; }
     public List<Project> Projects { get; set; } = [];
 
+    public string UserId { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
