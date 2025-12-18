@@ -3,10 +3,39 @@ namespace ShiemiApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class DevController(
-    UserRepository userRepo
+    UserRepository userRepo,
+    DevRepository devRepo
 )
 {
     private readonly UserRepository _userRepo = userRepo;
+    private readonly DevRepository _devRepo = devRepo;
+
+    [HttpPost]
+    public IResult Add(DevDto dto)
+    {
+        try
+        {
+            User dbUser = _userRepo.GetById(dto.UserId)!;
+            if (dbUser is null)
+                return Results.BadRequest(new { Message = "user doesnt exist!" });
+
+            Dev newDev = new()
+            {
+                UserId = dto.UserId,
+                User = dbUser,
+                ShortDesc = dto.ShortDesc,
+                StartingPrice = dto.StartingPrice
+            };
+            _devRepo.Add(newDev);
+
+            return Results.Ok(new { Message = "new developer created!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "error creating new developer" });
+        }
+    }
 
     [HttpGet("{userId}/set-dev")]
     public IResult SetDeveloper(int userId)
@@ -46,43 +75,39 @@ public class DevController(
             return Results.InternalServerError(new { Message = "Error resetting devMode on user !" });
         }
     }
-
-    [HttpGet("{id}")]
-    public IResult Get(int id)
+    [HttpGet("{devId}")]
+    public IResult GetById(int devId)
     {
         try
         {
-            var dbUser = _userRepo.GetById(id);
-            return dbUser is null ? Results.BadRequest() : Results.Ok(dbUser);
-        }
-        catch (Exception ex) { return Results.BadRequest(ex); }
-    }
-    [HttpGet("{userId}/id")]
-    public IResult GetById(string userId)
-    {
-        try
-        {
-            var user = _userRepo.GetByUserId(userId);
-            if (user is null)
-                return Results.BadRequest("user doesn't exist!");
+            var dev = _devRepo.GetById(devId);
+            if (dev is null)
+                return Results.BadRequest("dev doesn't exist!");
 
-            return Results.Ok(new { user.Id });
+            return Results.Ok(new { Dev = dev });
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
+        }
     }
     [HttpGet("all")]
     public IResult GetAll()
     {
         try
         {
-            List<User> dbUsers = _userRepo.GetQueryable()
-                .Where(u => u.IsDeveloper == true)
-                .ToList();
-            if (dbUsers.Count() < 0)
+            List<Dev> dbDevs = [.. _devRepo.GetAll()];
+            if (dbDevs.Count < 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
-            Mapper mapper = MapperUtility.Get<User, DevUserDto>();
-            List<DevUserDto> devs = mapper.Map<List<DevUserDto>>(dbUsers);
+            Mapper mapper = MapperUtility.Get<Dev, DevDto>();
+            List<DevDto> devs = mapper.Map<List<DevDto>>(dbDevs);
+            for (int i = 0; i < devs.Count; i++)
+            {
+                devs[i].Username = dbDevs[i].User!.FirstName + " " + dbDevs[i].User!.LastName;
+                devs[i].Profile = dbDevs[i].User!.Profile;
+            }
+
             return Results.Ok(devs);
         }
         catch (Exception ex)

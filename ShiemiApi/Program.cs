@@ -30,6 +30,7 @@ builder.Services.AddScoped<RoomRepository>();
 builder.Services.AddScoped<MessageRepository>();
 builder.Services.AddScoped<ChannelRepository>();
 builder.Services.AddScoped<ReviewRepository>();
+builder.Services.AddScoped<DevRepository>();
 
 // Add storage 
 builder.Services.AddSingleton<UserStorageService>();
