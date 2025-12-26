@@ -3,10 +3,12 @@ namespace ShiemiApi.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class UserController(
-    UserRepository userRepo
+    UserRepository userRepo,
+    ImageUtility imageUtil
 )
 {
     private readonly UserRepository _userRepo = userRepo;
+    private readonly ImageUtility _imageUtil = imageUtil;
 
     [HttpPost]
     public IResult CreateUser(CreateUserDto dto)
@@ -34,17 +36,31 @@ public class UserController(
         }
     }
 
+    // returns user using db integer id !
     [HttpGet("{id}")]
     public IResult GetUser(int id)
     {
         try
         {
             var dbUser = _userRepo.GetById(id);
-            return dbUser is null ? Results.BadRequest() : Results.Ok(dbUser);
+            if (dbUser is null)
+                return Results.BadRequest(new { Message = "user doesnt exist!" });
+
+            Mapper mapper = MapperUtility.Get<User, GetUserDto>();
+            GetUserDto dto = mapper.Map<GetUserDto>(dbUser);
+            if (dbUser.ProfilePhoto is not null)
+                dto.ProfilePhotoURL = dbUser.ProfilePhoto.URL;
+
+            return Results.Ok(dto);
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "error fetching user!" });
+        }
     }
 
+    // returns user using string id !
     [HttpGet("id/{UserId}")]
     public IResult GetUserById(string UserId)
     {
@@ -52,15 +68,26 @@ public class UserController(
         {
             var dbUser = _userRepo.GetByUserId(UserId);
             if (dbUser is null)
-                return Results.BadRequest();
+                return Results.BadRequest(new { Message = "user doesnt exist!" });
 
-            var mapper = MapperUtility.Get<User, UserDto>();
-            UserDto dto = mapper.Map<UserDto>(dbUser);
+            Mapper mapper = MapperUtility.Get<User, GetUserDto>();
+            GetUserDto dto = mapper.Map<GetUserDto>(dbUser);
+            if (dbUser.ProfilePhoto is not null)
+                dto.ProfilePhotoURL = dbUser.ProfilePhoto.URL;
+
             return Results.Ok(dto);
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new
+            {
+                Message = "error fetching user using string id !"
+            });
+        }
     }
 
+    // returns user's db integer id !
     [HttpGet("{userId}/id")]
     public IResult GetUserId(string userId)
     {
@@ -70,9 +97,12 @@ public class UserController(
             if (user is null)
                 return Results.BadRequest("user doesn't exist!");
 
-            return Results.Ok(new { user.Id });
+            return Results.Ok(new { Id = user.Id });
         }
-        catch (Exception ex) { return Results.BadRequest(ex); }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex);
+        }
     }
 
     [HttpGet("/all")]
@@ -89,16 +119,49 @@ public class UserController(
     }
 
     [HttpPut]
-    public IResult UpdateUser(User user)
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IResult> UpdateUser(
+        [FromForm] string id,
+        [FromForm] string firstName,
+        [FromForm] string lastName,
+        [FromForm] IFormFile profilePhoto
+    )
     {
         try
         {
-            _userRepo.Update(user);
-            return Results.Ok();
+            User dbUser = _userRepo.GetById(int.Parse(id))!;
+            if (dbUser is null)
+                return Results.BadRequest(new { Message = "user doesnot exists!" });
+
+            UploadResult result = _imageUtil.UploadImage(profilePhoto);
+            if (result is null)
+                return Results.BadRequest(new { Message = "failed to upload profile photo!" });
+
+            dbUser.FirstName = firstName;
+            dbUser.LastName = lastName;
+            if (dbUser.ProfilePhoto is null)
+                dbUser.ProfilePhoto = new()
+                {
+                    PublicId = result.PublicId,
+                    URL = result.Url.ToString()
+                };
+
+            else
+            {
+                dbUser.ProfilePhoto.PublicId = result.PublicId;
+                dbUser.ProfilePhoto.URL = result.Url.ToString();
+            }
+
+            _userRepo.Update(dbUser);
+            return Results.Ok(new
+            {
+                Message = "user updated successfully!"
+            });
         }
         catch (Exception ex)
         {
-            return Results.BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "error updating user!" });
         }
     }
 

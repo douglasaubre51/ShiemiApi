@@ -61,7 +61,7 @@ namespace ShiemiApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Advert")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -128,6 +128,39 @@ namespace ShiemiApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("ShiemiApi.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("DevId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("URL")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DevId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("ShiemiApi.Models.Project", b =>
@@ -265,10 +298,6 @@ namespace ShiemiApi.Migrations
                     b.Property<long>("Phone")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Profile")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -324,6 +353,21 @@ namespace ShiemiApi.Migrations
                     b.Navigation("Channel");
 
                     b.Navigation("Room");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShiemiApi.Models.Photo", b =>
+                {
+                    b.HasOne("ShiemiApi.Models.Dev", "Dev")
+                        .WithOne("Advert")
+                        .HasForeignKey("ShiemiApi.Models.Photo", "DevId");
+
+                    b.HasOne("ShiemiApi.Models.User", "User")
+                        .WithOne("ProfilePhoto")
+                        .HasForeignKey("ShiemiApi.Models.Photo", "UserId");
+
+                    b.Navigation("Dev");
 
                     b.Navigation("User");
                 });
@@ -386,6 +430,11 @@ namespace ShiemiApi.Migrations
                     b.Navigation("Messages");
                 });
 
+            modelBuilder.Entity("ShiemiApi.Models.Dev", b =>
+                {
+                    b.Navigation("Advert");
+                });
+
             modelBuilder.Entity("ShiemiApi.Models.Project", b =>
                 {
                     b.Navigation("Channel");
@@ -401,6 +450,8 @@ namespace ShiemiApi.Migrations
             modelBuilder.Entity("ShiemiApi.Models.User", b =>
                 {
                     b.Navigation("Dev");
+
+                    b.Navigation("ProfilePhoto");
 
                     b.Navigation("Projects");
                 });

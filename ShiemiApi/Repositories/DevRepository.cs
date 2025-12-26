@@ -11,7 +11,10 @@ public class DevRepository(ApplicationDbContext context)
         => _context.Devs.Include(u => u.User)
         .SingleOrDefault(u => u.UserId == id);
     public List<Dev> GetAll()
-        => [.. _context.Devs.Include(u => u.User)];
+        => _context.Devs.Include(u => u.User)
+        .ThenInclude(p => p!.ProfilePhoto)
+        .ToList();
+
 
     public void Add(Dev dev)
     {

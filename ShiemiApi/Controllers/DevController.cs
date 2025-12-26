@@ -4,36 +4,71 @@ namespace ShiemiApi.Controllers;
 [ApiController]
 public class DevController(
     UserRepository userRepo,
-    DevRepository devRepo
+    DevRepository devRepo,
+    PhotoRepository photoRepo,
+    ImageUtility imageUtil
 )
 {
     private readonly UserRepository _userRepo = userRepo;
     private readonly DevRepository _devRepo = devRepo;
+    private readonly PhotoRepository _photoRepo = photoRepo;
+    private readonly ImageUtility _imageUtil = imageUtil;
 
     [HttpPost]
-    public IResult Add(DevDto dto)
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IResult> Add(
+        [FromForm] string id,
+        [FromForm] string shortDesc,
+        [FromForm] string description,
+        [FromForm] string startingPrice,
+        [FromForm] IFormFile advertPhoto
+    )
     {
         try
         {
-            User dbUser = _userRepo.GetById(dto.UserId)!;
+            int userId = int.Parse(id);
+            User dbUser = _userRepo.GetById(userId)!;
             if (dbUser is null)
-                return Results.BadRequest(new { Message = "user doesnt exist!" });
+                return Results.BadRequest(new
+                {
+                    Message = "user doesnt exist!"
+                });
+
+            UploadResult result = _imageUtil.UploadImage(advertPhoto);
 
             Dev newDev = new()
             {
-                UserId = dto.UserId,
+                UserId = userId,
                 User = dbUser,
-                ShortDesc = dto.ShortDesc,
-                StartingPrice = dto.StartingPrice
+                ShortDesc = shortDesc,
+                Description = description,
+                StartingPrice = decimal.Parse(startingPrice),
             };
             _devRepo.Add(newDev);
 
-            return Results.Ok(new { Message = "new developer created!" });
+            Photo newAdvert = new()
+            {
+                Dev = _userRepo.GetById(userId)!.Dev,
+                PublicId = result.PublicId,
+                URL = result.Url.ToString()
+            };
+            _photoRepo.Add(newAdvert);
+
+            dbUser.IsDeveloper = true;
+            _userRepo.Save();
+
+            return Results.Ok(new
+            {
+                Message = "new developer created!"
+            });
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return Results.InternalServerError(new { Message = "error creating new developer" });
+            return Results.InternalServerError(new
+            {
+                Message = "error creating new developer"
+            });
         }
     }
 
@@ -63,7 +98,10 @@ public class DevController(
         {
             User? dbUser = _userRepo.GetById(userId);
             if (dbUser is null)
-                return Results.BadRequest(new { Message = "user doesnot exist!" });
+                return Results.BadRequest(new
+                {
+                    Message = "user doesnot exist!"
+                });
 
             dbUser.IsDeveloper = false;
             _userRepo.Save();
@@ -72,7 +110,10 @@ public class DevController(
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return Results.InternalServerError(new { Message = "Error resetting devMode on user !" });
+            return Results.InternalServerError(new
+            {
+                Message = "Error resetting devMode on user !"
+            });
         }
     }
     [HttpGet("{devId}")]
@@ -105,7 +146,8 @@ public class DevController(
             for (int i = 0; i < devs.Count; i++)
             {
                 devs[i].Username = dbDevs[i].User!.FirstName + " " + dbDevs[i].User!.LastName;
-                devs[i].Profile = dbDevs[i].User!.Profile;
+                if (dbDevs[i].User!.ProfilePhoto is not null)
+                    devs[i].Profile = dbDevs[i].User!.ProfilePhoto!.URL;
             }
 
             return Results.Ok(devs);

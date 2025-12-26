@@ -26,3 +26,21 @@ public class DevUserDto
     public bool IsDeveloper { get; set; }
     public long Phone { get; set; }
 }
+
+public record UpdateUserDto(
+    int Id,
+    string FirstName,
+    string LastName,
+    IFormFile ProfilePhoto
+);
+
+public class GetUserDto
+{
+    public int Id { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public bool IsDeveloper { get; set; }
+    public string ProfilePhotoURL { get; set; } = string.Empty;
+}
