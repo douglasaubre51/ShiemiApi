@@ -31,10 +31,13 @@ public class UserRepository(ApplicationDbContext context)
     }
 
     public User? GetById(int id)
-        => _context.Users.SingleOrDefault(u => u.Id == id);
+        => _context.Users.Include(d => d.Dev)
+        .Include(p => p.ProfilePhoto)
+        .SingleOrDefault(u => u.Id == id);
 
     public User? GetByUserId(string id)
-        => _context.Users.SingleOrDefault(u => u.UserId == id);
+        => _context.Users.Include(p => p.ProfilePhoto)
+        .SingleOrDefault(u => u.UserId == id);
     public List<User> GetAll()
         => [.. _context.Users];
 
@@ -49,6 +52,8 @@ public class UserRepository(ApplicationDbContext context)
         _context.Users.Remove(user);
         Save();
     }
-    private void Save()
+    public void Save()
         => _context.SaveChanges();
+    public IQueryable<User> GetQueryable()
+        => _context.Users;
 }

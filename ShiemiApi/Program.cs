@@ -1,11 +1,10 @@
-using DotNetEnv;
-using ShiemiApi.Storage.HubStorage;
-using ShiemiApi.Utility;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Load Environment variables.
 Env.Load();
+CloudinaryKeyStore.CloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")!;
+CloudinaryKeyStore.ApiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY")!;
+CloudinaryKeyStore.ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")!;
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -29,6 +28,9 @@ builder.Services.AddScoped<ProjectRepository>();
 builder.Services.AddScoped<RoomRepository>();
 builder.Services.AddScoped<MessageRepository>();
 builder.Services.AddScoped<ChannelRepository>();
+builder.Services.AddScoped<ReviewRepository>();
+builder.Services.AddScoped<DevRepository>();
+builder.Services.AddScoped<PhotoRepository>();
 
 // Add storage 
 builder.Services.AddSingleton<UserStorageService>();
@@ -38,6 +40,8 @@ builder.Services.AddSingleton<ProjectStorage>();
 // Add services
 // scoped
 builder.Services.AddScoped<RoomService>();
+// singleton
+builder.Services.AddSingleton<ImageUtility>();
 
 
 var app = builder.Build();
