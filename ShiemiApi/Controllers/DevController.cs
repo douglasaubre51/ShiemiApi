@@ -116,6 +116,23 @@ public class DevController(
             });
         }
     }
+    [HttpGet("{userId}/userId/dev")]
+    public IResult GetByUserId(int userId)
+    {
+        try
+        {
+            var dev = _devRepo.GetQueryable()
+				.SingleOrDefault(d => d.UserId == userId);
+            if (dev is null)
+                return Results.BadRequest("dev doesn't exist!");
+
+            return Results.Ok( dev );
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(new { Message = ex.Message });
+        }
+    }
     [HttpGet("{devId}")]
     public IResult GetById(int devId)
     {
@@ -156,33 +173,6 @@ public class DevController(
         {
             Console.WriteLine(ex.Message);
             return Results.BadRequest(new { Message = ex.Message });
-        }
-    }
-
-    [HttpPut]
-    public IResult Update(User user)
-    {
-        try
-        {
-            _userRepo.Update(user);
-            return Results.Ok();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex);
-        }
-    }
-    [HttpDelete("{Id}")]
-    public IResult Remove(int Id)
-    {
-        try
-        {
-            _userRepo.Remove(Id);
-            return Results.Ok();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex);
         }
     }
 }

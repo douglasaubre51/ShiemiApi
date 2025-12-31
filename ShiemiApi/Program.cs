@@ -51,6 +51,7 @@ var app = builder.Build();
 app.MapHub<RoomHub>("/hubs/room");
 app.MapHub<ChannelHub>("/hubs/channel");
 app.MapHub<ProjectHub>("/hubs/project");
+app.MapHub<DevHub>("/hubs/dev");
 
 app.MapControllers();
 
