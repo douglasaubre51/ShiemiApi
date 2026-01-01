@@ -16,7 +16,7 @@ public class MessageRepository(ApplicationDbContext context)
     public List<Message> GetAll()
         => [.. _context.Messages];
     public List<Message> GetAllByChannelId(int channelId)
-        => _context.Messages.Include(c=>c.Channel)
+        => _context.Messages.Include(c => c.Channel)
         .Where(m => m.Channel!.Id == channelId)
         .ToList();
 
@@ -32,4 +32,6 @@ public class MessageRepository(ApplicationDbContext context)
         _context.Messages.Remove(message);
         Save();
     }
+    public void RemoveAll()
+        => _context.Messages.ExecuteDelete();
 }

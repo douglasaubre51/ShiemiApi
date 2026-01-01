@@ -9,7 +9,6 @@ public class ProjectRepository(ApplicationDbContext context)
         _context.Projects.Add(project);
         Save();
     }
-
     public void AddPrivateRoom(Room room, int id)
     {
         var project = _context.Projects

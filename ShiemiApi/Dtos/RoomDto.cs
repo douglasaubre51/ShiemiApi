@@ -10,3 +10,10 @@ public class RoomDto
 
     public List<MessageDto>? Messages { get; set; }
 }
+
+public record GetPrivateRoomDto(
+    int UserId,
+    int ProjectId,
+	int DevId,
+    RoomTypes RoomType
+);

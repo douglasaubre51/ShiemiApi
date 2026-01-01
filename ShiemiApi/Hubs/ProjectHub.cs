@@ -47,7 +47,7 @@ public class ProjectHub(
             string? connId = _projectStorage.GetById(userId);
             if (connId is null)
                 return;
-            
+
             List<ProjectDto> dtos = _mapper.Map<List<ProjectDto>>(projects);
             await Clients.User(connId).SendAsync(
                 "Load",

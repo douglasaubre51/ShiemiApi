@@ -15,5 +15,4 @@ public class User
     public long Phone { get; set; }
     public bool IsDeveloper { get; set; }
     public bool IsAdmin { get; set; }
-
 }

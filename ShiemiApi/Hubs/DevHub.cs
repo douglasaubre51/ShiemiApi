@@ -1,10 +1,10 @@
 namespace ShiemiApi.Hubs;
 
 public class DevHub(
-	RoomRepository roomRepo,
-	UserRepository userRepo,
-	DevRepository devRepo,
-	UserStorage userStorage
+    RoomRepository roomRepo,
+    UserRepository userRepo,
+    DevRepository devRepo,
+    UserStorage userStorage
 ) : Hub
 {
     private readonly RoomRepository _roomRepo = roomRepo;

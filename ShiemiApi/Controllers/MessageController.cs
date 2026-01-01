@@ -95,4 +95,17 @@ public class MessageController(
             return Results.BadRequest();
         }
     }
+    [HttpDelete("all")]
+    public IResult RemoveAll()
+    {
+        try
+        {
+            _messageRepo.RemoveAll();
+            return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Results.InternalServerError(new { Message = ex.Message });
+        }
+    }
 }

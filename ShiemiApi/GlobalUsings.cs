@@ -21,3 +21,4 @@ global using ShiemiApi.Services;
 global using ShiemiApi.Storage.EnvironmentStorage;
 global using ShiemiApi.Storage.HubStorage;
 global using ShiemiApi.Utility;
+global using ShiemiApi.Enums;

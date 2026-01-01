@@ -4,15 +4,6 @@ public class RoomRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
-    private void Save()
-        => _context.SaveChanges();
-
-    public void Create(Room room)
-    {
-        _context.Rooms.Add(room);
-        Save();
-    }
-
     public Room? GetById(int id)
         => _context.Rooms.SingleOrDefault(r => r.Id == id);
     public List<Room> GetAll()
@@ -49,6 +40,13 @@ public class RoomRepository(ApplicationDbContext context)
         return dtoCollection;
     }
 
+    private void Save()
+        => _context.SaveChanges();
+    public void Create(Room room)
+    {
+        _context.Rooms.Add(room);
+        Save();
+    }
     public void AddMessage(int roomId, Message message)
     {
         _context.Rooms.Include(m => m.Messages)
@@ -56,17 +54,24 @@ public class RoomRepository(ApplicationDbContext context)
             .Messages!.Add(message);
         Save();
     }
-
+    public void Add(Room room)
+    {
+        _context.Rooms.Add(room);
+        Save();
+    }
     public void Update(Room room)
     {
         _context.Rooms.Update(room);
         Save();
     }
-
     public void Remove(int id)
     {
         var room = _context.Rooms.Single(p => p.Id == id);
         _context.Rooms.Remove(room);
         Save();
+    }
+    public void RemoveAll()
+    {
+        _context.Rooms.ExecuteDelete();
     }
 }

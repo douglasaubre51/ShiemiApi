@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiemiApi.Data;
 
@@ -11,9 +12,11 @@ using ShiemiApi.Data;
 namespace ShiemiApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251231124952_Made Room.Messages nullable")]
+    partial class MadeRoomMessagesnullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,13 +252,10 @@ namespace ShiemiApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("DevId")
-                        .HasColumnType("int");
-
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProjectId")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoomType")
@@ -265,8 +265,6 @@ namespace ShiemiApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DevId");
 
                     b.HasIndex("OwnerId");
 
@@ -408,10 +406,6 @@ namespace ShiemiApi.Migrations
 
             modelBuilder.Entity("ShiemiApi.Models.Room", b =>
                 {
-                    b.HasOne("ShiemiApi.Models.Dev", "Dev")
-                        .WithMany("DevRooms")
-                        .HasForeignKey("DevId");
-
                     b.HasOne("ShiemiApi.Models.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
@@ -420,15 +414,15 @@ namespace ShiemiApi.Migrations
 
                     b.HasOne("ShiemiApi.Models.Project", "Project")
                         .WithMany("PrivateRooms")
-                        .HasForeignKey("ProjectId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ShiemiApi.Models.User", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Dev");
 
                     b.Navigation("Owner");
 
@@ -445,8 +439,6 @@ namespace ShiemiApi.Migrations
             modelBuilder.Entity("ShiemiApi.Models.Dev", b =>
                 {
                     b.Navigation("Advert");
-
-                    b.Navigation("DevRooms");
                 });
 
             modelBuilder.Entity("ShiemiApi.Models.Project", b =>

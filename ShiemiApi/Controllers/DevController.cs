@@ -122,11 +122,11 @@ public class DevController(
         try
         {
             var dev = _devRepo.GetQueryable()
-				.SingleOrDefault(d => d.UserId == userId);
+                .SingleOrDefault(d => d.UserId == userId);
             if (dev is null)
                 return Results.BadRequest("dev doesn't exist!");
 
-            return Results.Ok( dev );
+            return Results.Ok(dev);
         }
         catch (Exception ex)
         {
