@@ -31,6 +31,28 @@ public class ProjectController(
         }
     }
 
+	[HttpGet("all/{userId}/user-joined")]
+	public IResult GetUserJoinedProjects(int userId)
+	{
+		try
+		{
+			var dbProjects = _projectRepo.GetAll()
+				.Where(p => p.UserList.Contains(userId))
+				.ToList();
+			if(dbProjects.Count is 0)
+				return Results.BadRequest(new { Message = "empty list!" });
+
+			Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
+			List<ProjectDto> projectDtos = mapper.Map<List<ProjectDto>>(dbProjects);
+			return Results.Ok(new { Projects = projectDtos });
+		}
+		catch(Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return Results.InternalServerError(new { Message = "error fetching projects!"} );
+		}
+	}
+
     [HttpGet("all")]
     public IResult GetAll()
     {
