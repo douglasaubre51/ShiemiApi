@@ -63,6 +63,46 @@ public class RoomController(
         }
     }
 
+	[HttpGet("Dev/{userId}/all")]
+	public IResult GetAllDevRoomsByUserId(int userId)
+	{
+		try
+		{
+			var dbRooms = _roomRepository.GetQueryable()
+				.Include(t => t.Tenant)
+				.ThenInclude(p => p.ProfilePhoto)
+				.Include(d => d.Dev)
+				.Include(p => p.Project)
+				.Where(u => u.Owner.Id == userId)
+				.Where(r => r.RoomType == RoomTypes.DEV)
+				.ToList();
+			if(dbRooms.Count is 0)
+			{
+				return Results.BadRequest(new { Message = "empty list!" });
+			}
+			
+			List<GetDevRoomDto> devRoomDtos = [];
+			foreach(var r in dbRooms)
+			{
+				GetDevRoomDto dto = new ()
+				{
+					RoomId = r.Id,
+					ClientId = r.Tenant.Id,
+					ProfilePhotoURL = r.Tenant.ProfilePhoto.URL,
+					ClientName = r.Tenant.FirstName + r.Tenant.LastName
+				};
+				devRoomDtos.Add(dto);
+			}
+
+			return Results.Ok(devRoomDtos);
+		}
+		catch(Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return Results.InternalServerError(new { Message = "error fetching dev rooms for current user!" });
+		}
+	}
+
     [HttpGet("Private/{userId}/all")]
     public IResult GetAllByUserId(int userId)
     {

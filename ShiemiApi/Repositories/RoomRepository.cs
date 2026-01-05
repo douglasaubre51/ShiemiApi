@@ -4,6 +4,8 @@ public class RoomRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
+	public IQueryable<Room> GetQueryable()
+		=> _context.Rooms;
     public Room? GetById(int id)
         => _context.Rooms.SingleOrDefault(r => r.Id == id);
     public List<Room> GetAll()

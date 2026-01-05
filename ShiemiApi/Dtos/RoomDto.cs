@@ -17,3 +17,13 @@ public record GetPrivateRoomDto(
 	int DevId,
     RoomTypes RoomType
 );
+
+public class GetDevRoomDto
+{
+	public int RoomId { get; set; }
+	public int ClientId { get; set; }
+
+	public string ProfilePhotoURL { get; set; }
+	public string ClientName { get; set; }
+	public RoomTypes RoomType { get; set; } = RoomTypes.DEV;
+}
