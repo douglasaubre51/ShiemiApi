@@ -1,5 +1,3 @@
-using ShiemiApi.Storage.HubStorage;
-
 namespace ShiemiApi.Hubs;
 
 public class RoomHub(
@@ -22,10 +20,8 @@ public class RoomHub(
         return base.OnDisconnectedAsync(ex);
     }
 
-
     // hub methods
-
-    public async Task SetUserIdAndRoom(int userId, int roomId)
+    public async Task SetUserIdAndRoom(int userId, int roomId, RoomTypes roomType)
     {
         try
         {
@@ -33,7 +29,7 @@ public class RoomHub(
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
             await Clients.Caller.SendAsync(
                 "LoadChat",
-                _roomRepo.GetAllMessagesByRoomId(roomId)
+                _roomRepo.GetAllMessagesByRoomId(roomId, roomType)
             );
         }
         catch (Exception ex)
@@ -41,7 +37,6 @@ public class RoomHub(
             Console.WriteLine($"SetUserIdAndRoom error: {ex.Message}");
         }
     }
-
 
     public async Task SendChat(MessageDto dto)
     {

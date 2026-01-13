@@ -30,7 +30,7 @@ public class DevHub(
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
             await Clients.Caller.SendAsync(
                 "LoadChat",
-                _roomRepo.GetAllMessagesByRoomId(roomId)
+                _roomRepo.GetAllMessagesByRoomId(roomId, RoomTypes.DEV)
             );
         }
         catch (Exception ex)

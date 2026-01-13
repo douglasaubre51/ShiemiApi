@@ -4,8 +4,8 @@ public class RoomRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
-	public IQueryable<Room> GetQueryable()
-		=> _context.Rooms;
+    public IQueryable<Room> GetQueryable()
+        => _context.Rooms;
     public Room? GetById(int id)
         => _context.Rooms.SingleOrDefault(r => r.Id == id);
     public List<Room> GetAll()
@@ -17,11 +17,13 @@ public class RoomRepository(ApplicationDbContext context)
             .Include(m => m.Messages)
             .Where(u => u.Owner.Id == id)
             .ToList();
-    public List<MessageDto>? GetAllMessagesByRoomId(int id)
+    public List<MessageDto>? GetAllMessagesByRoomId(int id, RoomTypes roomType)
     {
         var messages = _context.Rooms
-            .Include(m => m.Messages).ThenInclude(message => message.User)
-            .Single(r => r.Id == id)
+            .Include(m => m.Messages)
+            .ThenInclude(message => message.User)
+            .Where(r => r.Id == id)
+            .Single(r => r.RoomType == roomType)
             .Messages;
         if (messages is null)
             return null;
