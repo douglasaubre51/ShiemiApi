@@ -8,6 +8,45 @@ public class ProjectController(
 {
     private readonly ProjectRepository _projectRepo = projectRepo;
 
+    [HttpGet("{projectId}/joined-client/all")]
+    public IResult GetAllJoinedClientId(int projectId)
+    {
+        try
+        {
+            var dbProject = _projectRepo.GetById(projectId);
+            if(dbProject is null)
+                return Results.BadRequest(new { Message = "project doesnot exists!" });
+
+            var clientList = dbProject.UserList.ToList();
+            return Results.Ok(clientList);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError();
+        }
+    }
+
+    [HttpGet("{projectId}/{clientId}/add-client")]
+    public IResult AddClient(int projectId, int clientId)
+    {
+        try
+        {
+            var dbProject = _projectRepo.GetById(projectId);
+            if(dbProject is null)
+                return Results.BadRequest(new { Message = "project doesnot exists!" });
+
+            dbProject.UserList.Add(clientId);
+            _projectRepo.Save();
+            return Results.Ok(new { Message = "client added to project!" });
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError();
+        }
+    }
+
     [HttpPost]
     public IResult CreateProject(ProjectDto dto)
     {

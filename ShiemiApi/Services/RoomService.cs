@@ -19,9 +19,12 @@ public class RoomService(
     )
     {
         // check if room already exists!
-        var exists = project.PrivateRooms.Any(r => r.Tenant.Id == tenant.Id);
+        Console.WriteLine("projectId: "+project.Id);
+        var exists = project.PrivateRooms.Where(r => r.Tenant.Id == tenant.Id)
+            .Any(r => r.ProjectId == project.Id);
         if (exists is true)
-            return project.PrivateRooms!.Single(r => r.Tenant.Id == tenant.Id);
+            return project.PrivateRooms!.Where(r => r.Tenant.Id == tenant.Id)
+                .Single(r => r.ProjectId == project.Id);
 
         // else create new room!
         Room newRoom = new()
@@ -35,7 +38,8 @@ public class RoomService(
         _roomRepo.Add(newRoom);
 
         // fetch and send!
-        return project.PrivateRooms!.Single(r => r.Tenant.Id == tenant.Id);
+        return project.PrivateRooms!.Where(r => r.Tenant.Id == tenant.Id)
+            .Single(r => r.ProjectId == project.Id);
     }
 
     // dev room init
@@ -44,9 +48,12 @@ public class RoomService(
         Dev dev
     )
     {
-        var exists = dev.DevRooms.Any(r => r.Tenant.Id == tenant.Id);
+        Console.WriteLine("devId: "+dev.Id);
+        var exists = dev.DevRooms.Where(r => r.Tenant.Id == tenant.Id)
+            .Any(r => r.Dev.Id == dev.Id);
         if (exists is true)
-            return dev.DevRooms!.Single(r => r.Tenant.Id == tenant.Id);
+            return dev.DevRooms!.Where(r => r.Tenant.Id == tenant.Id)
+                .Single(r => r.Dev.Id == dev.Id);
 
         Room newRoom = new()
         {
@@ -60,6 +67,7 @@ public class RoomService(
         };
         _roomRepo.Add(newRoom);
 
-        return dev.DevRooms!.Single(r => r.Tenant.Id == tenant.Id);
+        return dev.DevRooms!.Where(r => r.Tenant.Id == tenant.Id)
+            .Single(r => r.Dev.Id == dev.Id);
     }
 }

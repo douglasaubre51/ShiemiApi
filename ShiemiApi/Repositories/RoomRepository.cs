@@ -6,25 +6,47 @@ public class RoomRepository(ApplicationDbContext context)
 
     public IQueryable<Room> GetQueryable()
         => _context.Rooms;
+
     public Room? GetById(int id)
         => _context.Rooms.SingleOrDefault(r => r.Id == id);
     public List<Room> GetAll()
-        => [.. _context.Rooms];
+        => _context.Rooms
+        .Include(u => u.Owner)
+        .Include(u => u.Tenant)
+        .Include(m => m.Messages)
+        .ToList();
     public List<Room> GetAllByUserId(int id)
         => _context.Rooms
-            .Include(u => u.Owner)
-            .Include(u => u.Tenant)
-            .Include(m => m.Messages)
-            .Where(u => u.Owner.Id == id)
-            .ToList();
-    public List<MessageDto>? GetAllMessagesByRoomId(int id, RoomTypes roomType)
+        .Include(u => u.Owner)
+        .Include(u => u.Tenant)
+        .Include(m => m.Messages)
+        .Where(u => u.Owner.Id == id)
+        .ToList();
+    public List<MessageDto>? GetAllMessagesByRoomId(int id, int projectOrDevId, RoomTypes roomType)
     {
-        var messages = _context.Rooms
-            .Include(m => m.Messages)
-            .ThenInclude(message => message.User)
-            .Where(r => r.Id == id)
-            .Single(r => r.RoomType == roomType)
-            .Messages;
+        List<Message> messages = [];
+
+        if(RoomTypes.PRIVATE == roomType)
+        {
+            messages = _context.Rooms
+                .Include(m => m.Messages)
+                .ThenInclude(message => message.User)
+                .Where(r => r.Id == id)
+                .Where(r => r.Project.Id == projectOrDevId)
+                .Single(r => r.RoomType == roomType)
+                .Messages;
+        }
+        else
+        {
+            messages = _context.Rooms
+                .Include(m => m.Messages)
+                .ThenInclude(message => message.User)
+                .Where(r => r.Id == id)
+                .Where(r => r.Dev.Id == projectOrDevId)
+                .Single(r => r.RoomType == roomType)
+                .Messages;
+        }
+
         if (messages is null)
             return null;
 

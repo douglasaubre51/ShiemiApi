@@ -27,3 +27,12 @@ public class GetDevRoomDto
 	public string ClientName { get; set; }
 	public RoomTypes RoomType { get; set; } = RoomTypes.DEV;
 }
+
+public record GetAllRoomsDto(
+        int? ProjectId,
+        int? OwnerId,
+        int? TenantId,
+        int? DevId,
+        RoomTypes RoomType
+);
+        

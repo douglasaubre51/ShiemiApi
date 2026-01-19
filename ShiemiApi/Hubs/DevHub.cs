@@ -22,7 +22,7 @@ public class DevHub(
     }
 
     // hub methods
-    public async Task SetUserIdAndRoom(int userId, int roomId)
+    public async Task SetUserIdAndRoom(int userId, int devId, int roomId)
     {
         try
         {
@@ -30,7 +30,7 @@ public class DevHub(
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
             await Clients.Caller.SendAsync(
                 "LoadChat",
-                _roomRepo.GetAllMessagesByRoomId(roomId, RoomTypes.DEV)
+                _roomRepo.GetAllMessagesByRoomId(roomId, devId, RoomTypes.DEV)
             );
         }
         catch (Exception ex)
