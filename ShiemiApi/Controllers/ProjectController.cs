@@ -3,10 +3,68 @@ namespace ShiemiApi.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class ProjectController(
-    ProjectRepository projectRepo
+    ProjectRepository projectRepo,
+    RoomRepository roomRepo
 )
 {
     private readonly ProjectRepository _projectRepo = projectRepo;
+    private readonly RoomRepository _roomRepo = roomRepo;
+
+    [HttpGet("{projectId}/init/invite-list")]
+    public IResult InitInviteList(int projectId)
+    {
+        try
+        {
+            var inviteRequests = _projectRepo.GetById(projectId)
+                .InviteList;
+            inviteRequests = new List<int>();
+            _projectRepo.Save();
+
+            return Results.Ok();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError();
+        }
+    }
+
+    [HttpGet("{projectId}/invite-request/all")]
+    public IResult GetAllInviteRequests(int projectId)
+    {
+        try
+        {
+            var inviteRequests = _projectRepo.GetById(projectId)
+                .InviteList
+                .ToList();
+            if(inviteRequests.Count is 0)
+                return Results.BadRequest(new { Message = "empty list" });
+
+            return Results.Ok(inviteRequests);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError();
+        }
+    }
+
+    [HttpGet("{projectId}/{userId}/send-request-admin")]
+    public IResult SendAdminInviteRequest(int projectId,int userId)
+    {
+        try
+        {
+            _projectRepo.GetById(projectId)
+                .InviteList
+                .Add(userId);
+            return Results.Ok(new { Message = $"{userId} sent an invite to project admin!" });
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError();
+        }
+    }
 
     [HttpGet("{projectId}/joined-client/all")]
     public IResult GetAllJoinedClientId(int projectId)
@@ -14,13 +72,13 @@ public class ProjectController(
         try
         {
             var dbProject = _projectRepo.GetById(projectId);
-            if(dbProject is null)
+            if (dbProject is null)
                 return Results.BadRequest(new { Message = "project doesnot exists!" });
 
             var clientList = dbProject.UserList.ToList();
             return Results.Ok(clientList);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError();
@@ -33,14 +91,34 @@ public class ProjectController(
         try
         {
             var dbProject = _projectRepo.GetById(projectId);
-            if(dbProject is null)
+            if (dbProject is null)
                 return Results.BadRequest(new { Message = "project doesnot exists!" });
 
             dbProject.UserList.Add(clientId);
             _projectRepo.Save();
             return Results.Ok(new { Message = "client added to project!" });
         }
-        catch(Exception ex)
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError();
+        }
+    }
+
+    [HttpGet("{projectId}/{clientId}/remove-client")]
+    public IResult RemoveClient(int projectId, int clientId)
+    {
+        try
+        {
+            var dbProject = _projectRepo.GetById(projectId);
+            if (dbProject is null)
+                return Results.BadRequest(new { Message = "project doesnot exists!" });
+
+            dbProject.UserList.Remove(clientId);
+            _projectRepo.Save();
+            return Results.Ok(new { Message = "client removed from project!" });
+        }
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError();
@@ -70,27 +148,49 @@ public class ProjectController(
         }
     }
 
-	[HttpGet("all/{userId}/user-joined")]
-	public IResult GetUserJoinedProjects(int userId)
-	{
-		try
-		{
-			var dbProjects = _projectRepo.GetAll()
-				.Where(p => p.UserList.Contains(userId))
-				.ToList();
-			if(dbProjects.Count is 0)
-				return Results.BadRequest(new { Message = "empty list!" });
+    [HttpGet("{projectId}/devs-contacted/all")]
+    public async Task<IResult> GetAllProjectCandidates(int projectId)
+    {
+        try
+        {
+            List<User?> dbUsers = await _roomRepo.GetQueryable()
+                .Include(u => u.Tenant)
+                .Where(p => p.ProjectId == projectId)
+                .Select(u => u.Tenant)
+                .ToListAsync();
+            if (dbUsers.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
 
-			Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
-			List<ProjectDto> projectDtos = mapper.Map<List<ProjectDto>>(dbProjects);
-			return Results.Ok(new { Projects = projectDtos });
-		}
-		catch(Exception ex)
-		{
-			Console.WriteLine(ex.Message);
-			return Results.InternalServerError(new { Message = "error fetching projects!"} );
-		}
-	}
+            return Results.Ok(dbUsers);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "error fetching user details!" });
+        }
+    }
+
+    [HttpGet("all/{userId}/user-joined")]
+    public IResult GetUserJoinedProjects(int userId)
+    {
+        try
+        {
+            var dbProjects = _projectRepo.GetAll()
+                .Where(p => p.UserList.Contains(userId))
+                .ToList();
+            if (dbProjects.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
+
+            Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
+            List<ProjectDto> projectDtos = mapper.Map<List<ProjectDto>>(dbProjects);
+            return Results.Ok(new { Projects = projectDtos });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "error fetching projects!" });
+        }
+    }
 
     [HttpGet("all")]
     public IResult GetAll()

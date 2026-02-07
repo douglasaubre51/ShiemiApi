@@ -10,6 +10,7 @@ public class Project
     public List<Room> PrivateRooms { get; set; } = [];
     public List<int> UserList { get; set; } = [];
     public List<int> BlockList { get; set; } = [];
+    public List<int> InviteList { get; set; } = [];
 
     public string Title { get; set; } = string.Empty;
     public string ShortDesc { get; set; } = string.Empty;
