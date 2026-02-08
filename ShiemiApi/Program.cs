@@ -19,7 +19,7 @@ builder.Services.AddSignalR();
 // Configure Database pipeline.
 var conn_string = Environment.GetEnvironmentVariable("SHIEMI_DB_STRING");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(conn_string, ServerVersion.AutoDetect(conn_string))
+    options.UseNpgsql(conn_string)
 );
 
 // Add repositories 
