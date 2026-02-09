@@ -142,7 +142,15 @@ public class DevController(
             if (dev is null)
                 return Results.BadRequest("dev doesn't exist!");
 
-            return Results.Ok(new { Dev = dev });
+            DevDto dto = new DevDto() {
+                Id = dev.Id,
+                UserId = dev.UserId,
+                Advert = dev.Advert.URL,
+                ShortDesc = dev.ShortDesc,
+                Username = dev.User.FirstName +" "+dev.User.LastName
+            };
+
+            return Results.Ok(new { Dev = dto });
         }
         catch (Exception ex)
         {

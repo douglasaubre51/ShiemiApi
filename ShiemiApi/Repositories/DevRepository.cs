@@ -6,6 +6,7 @@ public class DevRepository(ApplicationDbContext context)
 
     public Dev? GetById(int id)
         => _context.Devs.Include(u => u.User)
+        .Include(p => p.Advert)
         .Include(d => d.DevRooms)
         .SingleOrDefault(u => u.Id == id);
     public Dev? GetByUserId(int id)
