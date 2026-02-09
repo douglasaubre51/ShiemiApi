@@ -147,6 +147,9 @@ public class RoomController(
             var roomListDto = new List<RoomDto>();
             foreach (var r in rooms)
             {
+                if(r.RoomType == RoomTypes.DEV)
+                    continue;
+                
                 var messages = new List<MessageDto>();
                 foreach (var m in r.Messages!)
                 {
@@ -163,6 +166,7 @@ public class RoomController(
                     };
                     messages.Add(message);
                 }
+
                 var room = new RoomDto()
                 {
                     Id = r.Id,

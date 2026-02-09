@@ -9,12 +9,14 @@ public class RoomRepository(ApplicationDbContext context)
 
     public Room? GetById(int id)
         => _context.Rooms.SingleOrDefault(r => r.Id == id);
+
     public List<Room> GetAll()
         => _context.Rooms
         .Include(u => u.Owner)
         .Include(u => u.Tenant)
         .Include(m => m.Messages)
         .ToList();
+
     public List<Room> GetAllByUserId(int id)
         => _context.Rooms
         .Include(u => u.Owner)
@@ -22,6 +24,7 @@ public class RoomRepository(ApplicationDbContext context)
         .Include(m => m.Messages)
         .Where(u => u.Owner.Id == id)
         .ToList();
+
     public List<MessageDto>? GetAllMessagesByRoomId(int id, int projectOrDevId, RoomTypes roomType)
     {
         List<Message> messages = [];

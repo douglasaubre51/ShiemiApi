@@ -1,10 +1,10 @@
 namespace ShiemiApi.Hubs;
 
 public class RoomHub(
-    UserStorage userStorage,
-    RoomRepository roomRepo,
-    UserRepository userRepo
-) : Hub
+        UserStorage userStorage,
+        RoomRepository roomRepo,
+        UserRepository userRepo
+        ) : Hub
 {
     private readonly RoomRepository _roomRepo = roomRepo;
     private readonly UserRepository _userRepo = userRepo;
@@ -30,11 +30,19 @@ public class RoomHub(
         try
         {
             _userStorage.Add(userId, Context.ConnectionId);
+
+            Console.WriteLine("roomId: "+roomId);
+            Console.WriteLine("project or devId: "+id);
+            Console.WriteLine(roomType.ToString());
+
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
+            Console.WriteLine(Context.ConnectionId);
+            Console.WriteLine(roomId.ToString());
+
             await Clients.Caller.SendAsync(
-                "LoadChat",
-                _roomRepo.GetAllMessagesByRoomId(roomId, id, roomType)
-            );
+                    "LoadChat",
+                    _roomRepo.GetAllMessagesByRoomId(roomId, id, roomType)
+                    );
         }
         catch (Exception ex)
         {
