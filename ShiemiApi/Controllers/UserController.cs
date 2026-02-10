@@ -118,6 +118,41 @@ public class UserController(
         }
     }
 
+    [HttpGet("all")]
+    public IResult GetAllNew()
+    {
+        try
+        {
+            var dbUsers = _userRepo.GetAll();
+            if(dbUsers.Count is 0)
+                return Results.BadRequest(new { Message = "empty list"});
+
+            List<GetUserDto> getUserDtos = [];
+
+            foreach(var user in dbUsers)
+            {
+                GetUserDto dto = new ()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    UserId = user.UserId,
+                    Email = user.Email,
+                    ProfilePhotoURL = user.ProfilePhoto?.URL ?? string.Empty,
+                    IsDeveloper = user.IsDeveloper
+                };
+
+                getUserDtos.Add(dto);
+            }
+
+            return Results.Ok(getUserDtos);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+    }
+
     [HttpPut]
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IResult> UpdateUser(

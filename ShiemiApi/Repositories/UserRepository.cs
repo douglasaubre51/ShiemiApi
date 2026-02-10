@@ -38,8 +38,11 @@ public class UserRepository(ApplicationDbContext context)
     public User? GetByUserId(string id)
         => _context.Users.Include(p => p.ProfilePhoto)
         .SingleOrDefault(u => u.UserId == id);
+
     public List<User> GetAll()
-        => [.. _context.Users];
+        => _context.Users.Include(p => p.ProfilePhoto)
+        .Include(d => d.Dev)
+        .ToList();
 
     public void Update(User user)
     {
