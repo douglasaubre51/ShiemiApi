@@ -43,6 +43,14 @@ builder.Services.AddScoped<RoomService>();
 // singleton
 builder.Services.AddSingleton<ImageUtility>();
 
+// Add Cors
+builder.Services.AddCors(options =>{
+        options.AddPolicy("Allow_SHOKO_Policy", policy =>
+                policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+        });
+
 
 var app = builder.Build();
 
@@ -79,5 +87,8 @@ app.MapPost("/api/user/create",
 // Use Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Use cors
+app.UseCors("Allow_SHOKO_Policy");
 
 app.Run();
