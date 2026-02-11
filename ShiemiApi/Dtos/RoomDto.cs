@@ -29,6 +29,7 @@ public class GetDevRoomDto
 }
 
 public record GetAllRoomsDto(
+        int RoomId,
         int? ProjectId,
         int? OwnerId,
         int? TenantId,

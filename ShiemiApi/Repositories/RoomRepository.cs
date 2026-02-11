@@ -8,7 +8,9 @@ public class RoomRepository(ApplicationDbContext context)
         => _context.Rooms;
 
     public Room? GetById(int id)
-        => _context.Rooms.SingleOrDefault(r => r.Id == id);
+        => _context.Rooms.Include(user=>user.Owner)
+        .Include(user=>user.Tenant)
+        .SingleOrDefault(r => r.Id == id);
 
     public List<Room> GetAll()
         => _context.Rooms

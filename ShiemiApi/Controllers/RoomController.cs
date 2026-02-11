@@ -63,6 +63,63 @@ public class RoomController(
         }
     }
 
+    [HttpGet("{id}")]
+    public IResult GetById(int id)
+    {
+        try
+        {
+            var dbRoom = _roomRepository.GetById(id);
+            if(dbRoom is null)
+                return Results.BadRequest(new { Message = "room doesnt exist!" });
+
+            return Results.Ok(new
+            {
+                Id = dbRoom.Id,
+                OwnerName = dbRoom.Owner!.FirstName + " " + dbRoom.Owner.LastName,
+                TenantName = dbRoom.Tenant!.FirstName + " " + dbRoom.Tenant.LastName,
+                RoomType = dbRoom.RoomType
+            });
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "server error!" });
+        }
+    }
+
+    [HttpGet("all")]
+    public IResult GetAllRooms()
+    {
+        try
+        {
+            var dbRooms = _roomRepository.GetAll();
+            if(dbRooms.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
+
+            List<GetAllRoomsDto> dtoList = [];
+            foreach(var r in dbRooms)
+            {
+                GetAllRoomsDto dto = new (
+                    RoomId: r.Id,
+                    OwnerId: r.Owner.Id,
+                    TenantId: r.Tenant.Id,
+                    ProjectId: r.ProjectId,
+                    DevId: r.DevId,
+                    RoomType: r.RoomType
+                );
+                dtoList.Add(dto);
+            }
+
+            return Results.Ok(dtoList);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "server error!" });
+        }
+    }
+
+
     [HttpGet("Dev/all")]
     public IResult GetAll()
     {
@@ -76,6 +133,7 @@ public class RoomController(
             foreach(var r in dbRooms)
             {
                 GetAllRoomsDto dto = new (
+                    RoomId: r.Id,
                     OwnerId: r.Owner.Id,
                     TenantId: r.Tenant.Id,
                     ProjectId: r.ProjectId,
