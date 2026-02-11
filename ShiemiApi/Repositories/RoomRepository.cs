@@ -15,7 +15,9 @@ public class RoomRepository(ApplicationDbContext context)
     public List<Room> GetAll()
         => _context.Rooms
         .Include(u => u.Owner)
+        .ThenInclude(owner => owner.ProfilePhoto)
         .Include(u => u.Tenant)
+        .ThenInclude(tenant => tenant.ProfilePhoto)
         .Include(m => m.Messages)
         .ToList();
 

@@ -63,6 +63,40 @@ public class RoomController(
         }
     }
 
+    [HttpGet("all/with-user")]
+    public IResult GetAllWithUsers()
+    {
+        try
+        {
+            var dbRooms = _roomRepository.GetAll();
+            if(dbRooms.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
+
+            List<GetAllRoomsWithUsersDto> dtos = [];
+            foreach(var room in dbRooms)
+            {
+                GetAllRoomsWithUsersDto dto = new (
+                        room.Id,
+                        room.Owner.FirstName + " " + room.Owner.LastName,
+                        room.Owner.ProfilePhoto.URL,
+                        room.Owner.Id,
+                        room.Tenant.FirstName + " " + room.Tenant.LastName,
+                        room.Tenant.ProfilePhoto.URL,
+                        room.Tenant.Id,
+                        room.RoomType);
+
+                dtos.Add(dto);
+            }
+
+            return Results.Ok(dtos);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = ex.Message} );
+        }
+    }
+
     [HttpGet("{id}")]
     public IResult GetById(int id)
     {

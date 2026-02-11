@@ -5,7 +5,11 @@ public class RoomDto
     public int Id { get; set; }
 
     public int OwnerId { get; set; }
+    public User Owner { get; set; }
+
     public int TenantId { get; set; }
+    public User Tenant { get; set; }
+
     public int ProjectId { get; set; }
 
     public List<MessageDto>? Messages { get; set; }
@@ -36,4 +40,14 @@ public record GetAllRoomsDto(
         int? DevId,
         RoomTypes RoomType
 );
-        
+
+public record GetAllRoomsWithUsersDto(
+        int RoomId,
+        string OwnerName,
+        string OwnerProfileURL,
+        int OwnerId,
+        string TenantName,
+        string TenantProfileURL,
+        int TenantId,
+        RoomTypes RoomType
+);
