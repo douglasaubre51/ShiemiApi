@@ -46,7 +46,7 @@ builder.Services.AddSingleton<ImageUtility>();
 // Add Cors
 builder.Services.AddCors(options =>{
         options.AddPolicy("Allow_SHOKO_Policy", policy =>
-                policy.WithOrigins("http://localhost:4200")
+                policy.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod());
         });
