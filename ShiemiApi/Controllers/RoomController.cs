@@ -48,6 +48,11 @@ public class RoomController(
                     Results.Ok(newRoom.Id) : Results.BadRequest("room is null!");
             }
 
+            Console.WriteLine($"userId: {dto.UserId}");
+            Console.WriteLine($"ProjectId: {dto.ProjectId}");
+            Console.WriteLine($"DevId: {dto.DevId}");
+            Console.WriteLine($"RoomType: {dto.RoomType}");
+
             // dev room
             var dev = _devRepo.GetById(dto.DevId);
             var room = _roomService.Initialize(
@@ -59,6 +64,7 @@ public class RoomController(
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"init private room error: " + ex.Message);
             return Results.InternalServerError(new { Message = ex.Message });
         }
     }

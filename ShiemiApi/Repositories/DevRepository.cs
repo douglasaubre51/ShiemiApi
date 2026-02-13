@@ -8,10 +8,13 @@ public class DevRepository(ApplicationDbContext context)
         => _context.Devs.Include(u => u.User)
         .Include(p => p.Advert)
         .Include(d => d.DevRooms)
+        .ThenInclude(devRooms => devRooms.Tenant)
         .SingleOrDefault(u => u.Id == id);
+
     public Dev? GetByUserId(int id)
         => _context.Devs.Include(u => u.User)
         .SingleOrDefault(u => u.UserId == id);
+
     public List<Dev> GetAll()
         => _context.Devs.Include(u => u.User)
         .ThenInclude(p => p!.ProfilePhoto)

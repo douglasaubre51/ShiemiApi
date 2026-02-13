@@ -48,12 +48,23 @@ public class RoomService(
         Dev dev
     )
     {
-        Console.WriteLine("devId: "+dev.Id);
+        Console.WriteLine("searching for existing dev room....");
+
+        var devRoomList = dev.DevRooms;
+        Console.WriteLine($"dev room is null: {devRoomList is null}");
+        Console.WriteLine($"dev room count: {devRoomList.Count}");
+        Console.WriteLine($"dev room id: {devRoomList.First().Id}");
+        Console.WriteLine($"tenant room id: {devRoomList.First().Tenant.Id}");
+
         var exists = dev.DevRooms.Where(r => r.Tenant.Id == tenant.Id)
             .Any(r => r.Dev.Id == dev.Id);
+        Console.WriteLine($"dev room exists: {exists}");
+
         if (exists is true)
             return dev.DevRooms!.Where(r => r.Tenant.Id == tenant.Id)
                 .Single(r => r.Dev.Id == dev.Id);
+
+        Console.WriteLine("creating new dev room....");
 
         Room newRoom = new()
         {
@@ -66,6 +77,8 @@ public class RoomService(
             RoomType = RoomTypes.DEV
         };
         _roomRepo.Add(newRoom);
+
+        Console.WriteLine("created new dev room!");
 
         return dev.DevRooms!.Where(r => r.Tenant.Id == tenant.Id)
             .Single(r => r.Dev.Id == dev.Id);
