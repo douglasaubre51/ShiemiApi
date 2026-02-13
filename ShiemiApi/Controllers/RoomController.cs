@@ -221,7 +221,7 @@ public class RoomController(
                 {
                     RoomId = r.Id,
                     ClientId = r.Tenant.Id,
-                    ProfilePhotoURL = r.Tenant.ProfilePhoto.URL,
+                    ProfilePhotoURL = r.Tenant.ProfilePhoto?.URL,
                     ClientName = r.Tenant.FirstName+" "+ r.Tenant.LastName
                 };
                 devRoomDtos.Add(dto);
