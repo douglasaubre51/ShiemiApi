@@ -23,6 +23,7 @@ public class ProjectRepository(ApplicationDbContext context)
 
     public Project? GetById(int id)
         => _context.Projects.Include(p => p.PrivateRooms)
+            .ThenInclude(privateRooms => privateRooms.Tenant)
             .Include(c => c.Channel)
             .SingleOrDefault(p => p.Id == id);
     public List<Project> GetAll()

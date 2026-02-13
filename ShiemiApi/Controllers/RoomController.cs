@@ -40,10 +40,13 @@ public class RoomController(
             {
                 // private chat room
                 var project = _projectRepo.GetById(dto.ProjectId);
+                Console.WriteLine("project id: " + project.Id);
+
                 var newRoom = _roomService.Initialize(
                         user,
                         project
                         );
+
                 return newRoom is not null ?
                     Results.Ok(newRoom.Id) : Results.BadRequest("room is null!");
             }
@@ -84,10 +87,10 @@ public class RoomController(
                 GetAllRoomsWithUsersDto dto = new (
                         room.Id,
                         room.Owner.FirstName + " " + room.Owner.LastName,
-                        room.Owner.ProfilePhoto.URL,
+                        room.Owner.ProfilePhoto?.URL,
                         room.Owner.Id,
                         room.Tenant.FirstName + " " + room.Tenant.LastName,
-                        room.Tenant.ProfilePhoto.URL,
+                        room.Tenant.ProfilePhoto?.URL,
                         room.Tenant.Id,
                         room.RoomType);
 

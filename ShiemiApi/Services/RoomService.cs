@@ -20,8 +20,13 @@ public class RoomService(
     {
         // check if room already exists!
         Console.WriteLine("projectId: "+project.Id);
+
+        var privateRooms = project.PrivateRooms;
+        Console.WriteLine("is private rooms null: "+ privateRooms.ToList());
+
         var exists = project.PrivateRooms.Where(r => r.Tenant.Id == tenant.Id)
             .Any(r => r.ProjectId == project.Id);
+
         if (exists is true)
             return project.PrivateRooms!.Where(r => r.Tenant.Id == tenant.Id)
                 .Single(r => r.ProjectId == project.Id);
