@@ -29,6 +29,24 @@ public class ProjectController(
         }
     }
 
+    [HttpGet("{title}/search")]
+    public IResult GetSearchedProjects(string title)
+    {
+        try
+        {
+            var projects = _projectRepo.SearchByTitle(title);
+            if(projects.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
+
+            return Results.Ok(projects);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = $"error: {ex.Message}" });
+        }
+    }
+
     [HttpGet("{projectId}/invite-request/all")]
     public IResult GetAllInviteRequests(int projectId)
     {
