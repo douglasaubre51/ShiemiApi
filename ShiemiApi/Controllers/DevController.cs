@@ -116,6 +116,38 @@ public class DevController(
             });
         }
     }
+
+    [HttpGet("{username}/search")]
+    public IResult GetSearchedDevs(string username)
+    {
+        try
+        {
+            Console.WriteLine(username);
+            var devs = _devRepo.SearchByTitle(username);
+            Console.WriteLine(devs.Count);
+            if(devs.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
+
+            List<SearchDevDto> dtos = [];
+            foreach(var dev in devs)
+            {
+                dtos.Add(new SearchDevDto{
+                        DevId = dev.Id,
+                        UserId = dev.UserId,
+                        Username = dev.User.FirstName + " " + dev.User.LastName
+                        });
+            }
+
+            return Results.Ok(dtos);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = $"error: {ex.Message}" });
+        }
+    }
+
+
     [HttpGet("{userId}/userId/dev")]
     public IResult GetByUserId(int userId)
     {
@@ -133,6 +165,7 @@ public class DevController(
             return Results.BadRequest(new { Message = ex.Message });
         }
     }
+
     [HttpGet("{devId}")]
     public IResult GetById(int devId)
     {
@@ -142,12 +175,17 @@ public class DevController(
             if (dev is null)
                 return Results.BadRequest("dev doesn't exist!");
 
+            Console.WriteLine("dev profile url: " + dev.Advert.URL);
+            Console.WriteLine("dev shortDesc: " + dev.ShortDesc);
+
             DevDto dto = new DevDto() {
                 Id = dev.Id,
                 UserId = dev.UserId,
                 Advert = dev.Advert.URL,
+                Profile = dev.User.ProfilePhoto.URL,
                 ShortDesc = dev.ShortDesc,
-                Username = dev.User.FirstName +" "+dev.User.LastName
+                Username = dev.User.FirstName +" "+dev.User.LastName,
+                StartingPrice = dev.StartingPrice
             };
 
             return Results.Ok(new { Dev = dto });
@@ -157,6 +195,7 @@ public class DevController(
             return Results.BadRequest(ex);
         }
     }
+
     [HttpGet("all")]
     public IResult GetAll()
     {

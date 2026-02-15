@@ -11,3 +11,11 @@ public class DevDto
     public string Username { get; set; } = string.Empty;
     public string Profile { get; set; } = string.Empty;
 }
+
+public class SearchDevDto
+{
+    public int DevId { get; set; }
+    public int UserId { get; set; }
+    public string Username { get; set; }
+}
+

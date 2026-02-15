@@ -4,8 +4,16 @@ public class DevRepository(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
+    public List<Dev> SearchByTitle(string username)
+        => _context.Devs.Include(c => c.User)
+        .Where(project => EF.Functions.Like(
+                    project.User.FirstName.ToLower() + " " + project.User.LastName.ToLower(),
+                    $"%{username.ToLower()}%"))
+        .ToList();
+
     public Dev? GetById(int id)
         => _context.Devs.Include(u => u.User)
+        .ThenInclude(user => user.ProfilePhoto)
         .Include(p => p.Advert)
         .Include(d => d.DevRooms)
         .ThenInclude(devRooms => devRooms.Tenant)
