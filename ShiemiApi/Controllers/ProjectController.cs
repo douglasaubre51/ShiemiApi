@@ -3,9 +3,9 @@ namespace ShiemiApi.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class ProjectController(
-    ProjectRepository projectRepo,
-    RoomRepository roomRepo
-)
+        ProjectRepository projectRepo,
+        RoomRepository roomRepo
+        )
 {
     private readonly ProjectRepository _projectRepo = projectRepo;
     private readonly RoomRepository _roomRepo = roomRepo;
@@ -26,6 +26,25 @@ public class ProjectController(
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError();
+        }
+    }
+
+    [HttpGet("{projectId}/joined-users-count")]
+    public IResult GetJoinedUsersCountById(int projectId)
+    {
+        try
+        {
+            var userCount = _projectRepo.GetById(projectId)
+                .UserList
+                .ToList()
+                .Count();
+
+            return Results.Ok(userCount);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = ex.Message });
         }
     }
 
@@ -242,8 +261,8 @@ public class ProjectController(
                 return Results.BadRequest(new { Message = "Empty projects !" });
 
             List<Project> allProjects = _projectRepo.GetAll()
-                                                    .Where(u => u.UserList.Contains(UserId))
-                                                    .ToList();
+                .Where(u => u.UserList.Contains(UserId))
+                .ToList();
             allProjects.ForEach(p => Console.WriteLine($"Project Title: {p.Title}"));
             projects.AddRange(allProjects);
 

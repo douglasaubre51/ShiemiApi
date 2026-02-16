@@ -39,6 +39,30 @@ public class ReviewController(
         }
     }
 
+    [HttpGet("project/{projectId}/review-count")]
+    public IResult GetProjectReviewCountByProjectId(int projectId)
+    {
+        try
+        {
+//            int reviewCount = _reviewRepo.GetAll()
+//                .Where(project => project.Id == projectId)
+//                .ToList()
+//                .Count();
+              
+                
+            var reviews = _reviewRepo.GetAll()
+                .Where(project => project.Id == projectId)
+                .ToList();
+
+            return Results.Ok();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = ex.Message });
+        }
+    }
+
     [HttpGet("all")]
     public IResult GetAll()
     {
