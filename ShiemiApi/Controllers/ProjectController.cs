@@ -5,9 +5,11 @@ namespace ShiemiApi.Controllers;
 public class ProjectController(
         ProjectRepository projectRepo,
         RoomRepository roomRepo,
-        ChannelRepository channelRepo
+        ChannelRepository channelRepo,
+        UserRepository userRepo
         )
 {
+    private readonly UserRepository _userRepo = userRepo;
     private readonly ChannelRepository _channelRepo = channelRepo;
     private readonly ProjectRepository _projectRepo = projectRepo;
     private readonly RoomRepository _roomRepo = roomRepo;
@@ -139,8 +141,16 @@ public class ProjectController(
             if (dbProject is null)
                 return Results.BadRequest(new { Message = "project doesnot exists!" });
 
+            // Add user to project !
             dbProject.UserList.Add(clientId);
             _projectRepo.Save();
+
+            // Add project to user participated projects !
+            _userRepo.GetById(clientId)!
+                .PastProjects!
+                .Add(dbProject.Id);
+            _userRepo.Save();
+
             return Results.Ok(new { Message = "client added to project!" });
         }
         catch (Exception ex)

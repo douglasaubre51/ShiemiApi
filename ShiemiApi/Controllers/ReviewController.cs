@@ -39,6 +39,9 @@ public class ReviewController(
         }
     }
 
+    // TODO :
+    // Add a review count calculator for ADMIN !
+
     [HttpGet("project/{projectId}/review-count")]
     public IResult GetProjectReviewCountByProjectId(int projectId)
     {
