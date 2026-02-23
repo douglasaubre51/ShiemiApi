@@ -236,6 +236,57 @@ public class RoomController(
         }
     }
 
+    [HttpGet("Private/{projectId}/{userId}/all")]
+    public IResult GetAllByUserId(int projectId, int userId)
+    {
+        try
+        {
+            var rooms = _roomRepository.GetAllByUserId(userId,projectId);
+            if (rooms.Count < 0)
+                return Results.BadRequest();
+
+            var roomListDto = new List<RoomDto>();
+            foreach (var r in rooms)
+            {
+                if(r.RoomType == RoomTypes.DEV)
+                    continue;
+                
+                var messages = new List<MessageDto>();
+                foreach (var m in r.Messages!)
+                {
+                    var message = new MessageDto
+                    {
+                        Id = m.Id,
+                        Text = m.Text,
+                        Voice = m.Voice,
+                        Video = m.Video,
+                        Photo = m.Photo,
+                        CreatedAt = m.CreatedAt,
+                        UserId = m.User.Id,
+                        RoomId = m.Room.Id
+                    };
+                    messages.Add(message);
+                }
+
+                var room = new RoomDto()
+                {
+                    Id = r.Id,
+                    TenantId = r.Tenant.Id,
+                    OwnerId = r.Owner.Id,
+                    ProjectId = r.ProjectId ?? 0,
+                    Messages = messages
+                };
+                roomListDto.Add(room);
+            }
+
+            return Results.Ok(new { Rooms = roomListDto });
+        }
+        catch (Exception ex)
+        {
+            return Results.InternalServerError(ex.Message);
+        }
+    }
+
     [HttpGet("Private/{userId}/all")]
     public IResult GetAllByUserId(int userId)
     {

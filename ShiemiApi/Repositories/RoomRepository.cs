@@ -21,12 +21,20 @@ public class RoomRepository(ApplicationDbContext context)
         .Include(m => m.Messages)
         .ToList();
 
+    public List<Room> GetAllByUserId(int id,int projectId)
+        => _context.Rooms
+        .Include(u => u.Owner)
+        .Include(u => u.Tenant)
+        .Include(m => m.Messages)
+        .Where(u => u.Owner!.Id == id)
+        .Where(room => room.ProjectId == projectId)
+        .ToList();
     public List<Room> GetAllByUserId(int id)
         => _context.Rooms
         .Include(u => u.Owner)
         .Include(u => u.Tenant)
         .Include(m => m.Messages)
-        .Where(u => u.Owner.Id == id)
+        .Where(u => u.Owner!.Id == id)
         .ToList();
 
     public List<MessageDto>? GetAllMessagesByRoomId(int id, int projectOrDevId, RoomTypes roomType)
