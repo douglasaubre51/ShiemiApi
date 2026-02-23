@@ -29,12 +29,16 @@ public class ChannelRepository(ApplicationDbContext context)
         _context.SaveChanges();
     }
 
+    public void Add(Channel channel)
+    {
+        _context.Channels.Add(channel);
+        Save();
+    }
     public void Update(Channel channel)
     {
         _context.Channels.Update(channel);
         Save();
     }
-
     public void Remove(int Id)
     {
         var channel = _context.Channels.Single(c => c.Id == Id);

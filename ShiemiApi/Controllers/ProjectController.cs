@@ -4,9 +4,11 @@ namespace ShiemiApi.Controllers;
 [Route("/api/[controller]")]
 public class ProjectController(
         ProjectRepository projectRepo,
-        RoomRepository roomRepo
+        RoomRepository roomRepo,
+        ChannelRepository channelRepo
         )
 {
+    private readonly ChannelRepository _channelRepo = channelRepo;
     private readonly ProjectRepository _projectRepo = projectRepo;
     private readonly RoomRepository _roomRepo = roomRepo;
 
@@ -22,7 +24,7 @@ public class ProjectController(
 
             return Results.Ok();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError();
@@ -41,7 +43,7 @@ public class ProjectController(
 
             return Results.Ok(userCount);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = ex.Message });
@@ -54,12 +56,18 @@ public class ProjectController(
         try
         {
             var projects = _projectRepo.SearchByTitle(title);
-            if(projects.Count is 0)
+            if (projects.Count is 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
-            return Results.Ok(projects);
+            return Results.Ok(projects.Select(project => new
+            {
+                Id = project.Id,
+                ShortDesc = project.ShortDesc,
+                Title = project.Title,
+                UserId = project.UserId
+            }));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = $"error: {ex.Message}" });
@@ -74,12 +82,12 @@ public class ProjectController(
             var inviteRequests = _projectRepo.GetById(projectId)
                 .InviteList
                 .ToList();
-            if(inviteRequests.Count is 0)
+            if (inviteRequests.Count is 0)
                 return Results.BadRequest(new { Message = "empty list" });
 
             return Results.Ok(inviteRequests);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError();
@@ -87,7 +95,7 @@ public class ProjectController(
     }
 
     [HttpGet("{projectId}/{userId}/send-request-admin")]
-    public IResult SendAdminInviteRequest(int projectId,int userId)
+    public IResult SendAdminInviteRequest(int projectId, int userId)
     {
         try
         {
@@ -96,7 +104,7 @@ public class ProjectController(
                 .Add(userId);
             return Results.Ok(new { Message = $"{userId} sent an invite to project admin!" });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError();
@@ -163,7 +171,7 @@ public class ProjectController(
     }
 
     [HttpPost]
-    public IResult CreateProject(ProjectDto dto)
+    public async Task<IResult> CreateProject(ProjectDto dto)
     {
         try
         {
@@ -175,6 +183,18 @@ public class ProjectController(
                 UserId = dto.UserId
             };
             _projectRepo.Create(project);
+
+            Project? dbProject = await _projectRepo.GetQueryable()
+                .SingleOrDefaultAsync(project => project.UserId == dto.UserId);
+            if (dbProject is null)
+                return Results.BadRequest(new { Message = "Couldnt create new Project!" });
+
+            // Add new Channel for the Project !
+            Channel channel = new Channel
+            {
+                ProjectId = dbProject.Id
+            };
+            _channelRepo.Add(channel);
 
             return Results.Ok();
         }
@@ -294,6 +314,12 @@ public class ProjectController(
             var dbProject = _projectRepo.GetById(ProjectId);
             if (dbProject is null)
                 return Results.NotFound();
+
+            if (dbProject.Channel is null)
+                _channelRepo.Add(new Channel
+                {
+                    ProjectId = dbProject.Id
+                });
 
             Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
             ProjectDto dto = mapper.Map<ProjectDto>(dbProject);

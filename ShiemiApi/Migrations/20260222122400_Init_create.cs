@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ShiemiApi.Migrations
 {
     /// <inheritdoc />
-    public partial class initcreate : Migration
+    public partial class Init_create : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,8 @@ namespace ShiemiApi.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     Phone = table.Column<long>(type: "bigint", nullable: false),
                     IsDeveloper = table.Column<bool>(type: "boolean", nullable: false),
-                    IsAdmin = table.Column<bool>(type: "boolean", nullable: false)
+                    IsAdmin = table.Column<bool>(type: "boolean", nullable: false),
+                    PastProjects = table.Column<List<int>>(type: "integer[]", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -36,6 +36,27 @@ public class UserController(
         }
     }
 
+    // Get all past projects !
+    [HttpGet("{id}/past-projects")]
+    public IResult GetPastProjects(int id)
+    {
+        try
+        {
+            var dbPastProjects = _userRepo.GetQueryable()
+                .SingleOrDefault(user => user.Id == id)!
+                .PastProjects;
+            if (dbPastProjects is null || dbPastProjects.Count is 0)
+                return Results.BadRequest(new { Message = "Empty list !" });
+
+            return Results.Ok(dbPastProjects);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = ex.Message });
+        }
+    }
+
     // returns user using db integer id !
     [HttpGet("{id}")]
     public IResult GetUser(int id)
@@ -124,14 +145,14 @@ public class UserController(
         try
         {
             var dbUsers = _userRepo.GetAll();
-            if(dbUsers.Count is 0)
-                return Results.BadRequest(new { Message = "empty list"});
+            if (dbUsers.Count is 0)
+                return Results.BadRequest(new { Message = "empty list" });
 
             List<GetUserDto> getUserDtos = [];
 
-            foreach(var user in dbUsers)
+            foreach (var user in dbUsers)
             {
-                GetUserDto dto = new ()
+                GetUserDto dto = new()
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,

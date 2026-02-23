@@ -19,10 +19,10 @@ public class RoomService(
     )
     {
         // check if room already exists!
-        Console.WriteLine("projectId: "+project.Id);
+        Console.WriteLine("projectId: " + project.Id);
 
         var privateRooms = project.PrivateRooms;
-        Console.WriteLine("is private rooms null: "+ privateRooms.ToList());
+        Console.WriteLine("is private rooms null: " + privateRooms.ToList());
 
         var exists = project.PrivateRooms.Where(r => r.Tenant.Id == tenant.Id)
             .Any(r => r.ProjectId == project.Id);
@@ -56,18 +56,14 @@ public class RoomService(
         Console.WriteLine("searching for existing dev room....");
 
         var devRoomList = dev.DevRooms;
-        Console.WriteLine($"dev room is null: {devRoomList is null}");
-        Console.WriteLine($"dev room count: {devRoomList.Count}");
-        Console.WriteLine($"dev room id: {devRoomList.First().Id}");
-        Console.WriteLine($"tenant room id: {devRoomList.First().Tenant.Id}");
 
-        var exists = dev.DevRooms.Where(r => r.Tenant.Id == tenant.Id)
-            .Any(r => r.Dev.Id == dev.Id);
+        var exists = dev.DevRooms.Where(r => r.Tenant!.Id == tenant.Id)
+            .Any(r => r.Dev!.Id == dev.Id);
         Console.WriteLine($"dev room exists: {exists}");
 
         if (exists is true)
-            return dev.DevRooms!.Where(r => r.Tenant.Id == tenant.Id)
-                .Single(r => r.Dev.Id == dev.Id);
+            return dev.DevRooms!.Where(r => r.Tenant!.Id == tenant.Id)
+                .Single(r => r.Dev!.Id == dev.Id);
 
         Console.WriteLine("creating new dev room....");
 
@@ -85,7 +81,7 @@ public class RoomService(
 
         Console.WriteLine("created new dev room!");
 
-        return dev.DevRooms!.Where(r => r.Tenant.Id == tenant.Id)
-            .Single(r => r.Dev.Id == dev.Id);
+        return dev.DevRooms!.Where(r => r.Tenant!.Id == tenant.Id)
+            .Single(r => r.Dev!.Id == dev.Id);
     }
 }

@@ -13,8 +13,8 @@ using ShiemiApi.Data;
 namespace ShiemiApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260211161213_added user nav props for rooms")]
-    partial class addedusernavpropsforrooms
+    [Migration("20260222122400_Init_create")]
+    partial class Init_create
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -310,6 +310,9 @@ namespace ShiemiApi.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.PrimitiveCollection<List<int>>("PastProjects")
+                        .HasColumnType("integer[]");
 
                     b.Property<long>("Phone")
                         .HasColumnType("bigint");

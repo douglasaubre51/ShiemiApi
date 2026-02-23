@@ -38,7 +38,7 @@ public class ChannelHub(
 
             Message message = new()
             {
-                Text = dto.Text,
+                Text = dto.Text!,
                 CreatedAt = dto.CreatedAt,
                 User = user,
                 Channel = channel
@@ -46,7 +46,10 @@ public class ChannelHub(
             _channelRepo.AddMessage(dto.ChannelId, message);
             Console.WriteLine($"{message.User.Id}: {message.Text}");
 
-            await Clients.Groups(channel.Title)  // broadcast message !
+            // Add username to message !
+            dto.Username = user.FirstName + " " + user.LastName;
+
+            await Clients.Groups(channel.Id.ToString())  // broadcast message !
                 .SendAsync("UpdateChat", dto);
         }
         catch (Exception ex)
@@ -65,7 +68,7 @@ public class ChannelHub(
                 return;
 
             _userStorage.Add(userId, Context.ConnectionId);
-            await Groups.AddToGroupAsync(Context.ConnectionId, channel.Title);
+            await Groups.AddToGroupAsync(Context.ConnectionId, channel.Id.ToString());
 
             foreach (var m in channel.Messages!)
             {
@@ -78,7 +81,8 @@ public class ChannelHub(
                     Photo = m.Photo,
                     CreatedAt = m.CreatedAt,
                     UserId = m.User!.Id,
-                    ChannelId = m.Channel!.Id
+                    ChannelId = m.Channel!.Id,
+                    Username = m.User.FirstName + " " + m.User.LastName
                 };
                 messages.Add(dto);
             }

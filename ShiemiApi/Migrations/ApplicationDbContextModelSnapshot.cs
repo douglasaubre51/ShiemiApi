@@ -308,6 +308,9 @@ namespace ShiemiApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.PrimitiveCollection<List<int>>("PastProjects")
+                        .HasColumnType("integer[]");
+
                     b.Property<long>("Phone")
                         .HasColumnType("bigint");
 

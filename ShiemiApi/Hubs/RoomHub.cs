@@ -31,14 +31,13 @@ public class RoomHub(
         {
             _userStorage.Add(userId, Context.ConnectionId);
 
-            Console.WriteLine("roomId: "+roomId);
-            Console.WriteLine("project or devId: "+id);
+            Console.WriteLine("roomId: " + roomId);
+            Console.WriteLine("project or devId: " + id);
             Console.WriteLine(roomType.ToString());
+            var oldMessages = _roomRepo.GetAllMessagesByRoomId(roomId, id, roomType);
+            Console.WriteLine($"no of messages: {oldMessages is null}");
 
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
-            Console.WriteLine(Context.ConnectionId);
-            Console.WriteLine(roomId.ToString());
-
             await Clients.Caller.SendAsync(
                     "LoadChat",
                     _roomRepo.GetAllMessagesByRoomId(roomId, id, roomType)
@@ -46,7 +45,7 @@ public class RoomHub(
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"SetUserIdAndRoom error: {ex.Message}");
+            Console.WriteLine($"Room: SetUserIdAndRoom error: {ex.Message}");
         }
     }
 

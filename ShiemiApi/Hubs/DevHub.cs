@@ -35,7 +35,7 @@ public class DevHub(
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"SetUserIdAndRoom error: {ex.Message}");
+            Console.WriteLine($"Dev: SetUserIdAndRoom error: {ex.Message}");
         }
     }
     public async Task SendChat(MessageDto dto)

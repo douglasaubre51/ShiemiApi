@@ -8,8 +8,8 @@ public class RoomRepository(ApplicationDbContext context)
         => _context.Rooms;
 
     public Room? GetById(int id)
-        => _context.Rooms.Include(user=>user.Owner)
-        .Include(user=>user.Tenant)
+        => _context.Rooms.Include(user => user.Owner)
+        .Include(user => user.Tenant)
         .SingleOrDefault(r => r.Id == id);
 
     public List<Room> GetAll()
@@ -33,25 +33,25 @@ public class RoomRepository(ApplicationDbContext context)
     {
         List<Message> messages = [];
 
-        if(RoomTypes.PRIVATE == roomType)
+        if (RoomTypes.PRIVATE == roomType)
         {
             messages = _context.Rooms
-                .Include(m => m.Messages)
+                .Include(m => m.Messages)!
                 .ThenInclude(message => message.User)
                 .Where(r => r.Id == id)
-                .Where(r => r.Project.Id == projectOrDevId)
+                .Where(r => r.Project!.Id == projectOrDevId)
                 .Single(r => r.RoomType == roomType)
-                .Messages;
+                .Messages!;
         }
         else
         {
             messages = _context.Rooms
-                .Include(m => m.Messages)
+                .Include(m => m.Messages)!
                 .ThenInclude(message => message.User)
                 .Where(r => r.Id == id)
-                .Where(r => r.Dev.Id == projectOrDevId)
+                .Where(r => r.Dev!.Id == projectOrDevId)
                 .Single(r => r.RoomType == roomType)
-                .Messages;
+                .Messages!;
         }
 
         if (messages is null)
@@ -63,7 +63,7 @@ public class RoomRepository(ApplicationDbContext context)
             MessageDto dto = new()
             {
                 Text = m.Text,
-                UserId = m.User.Id,
+                UserId = m.User!.Id,
                 RoomId = m.Id,
                 CreatedAt = m.CreatedAt
             };
