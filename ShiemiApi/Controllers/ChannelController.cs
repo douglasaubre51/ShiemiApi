@@ -10,6 +10,40 @@ public class ChannelController(
     private readonly ProjectRepository _projectRepo = projectRepo;
     private readonly ChannelRepository _channelRepo = channelRepo;
 
+    [HttpGet("all")]
+    public IResult GetAll()
+    {
+        try
+        {
+            List<Channel> dbChannels = _channelRepo.GetAll();
+            if (dbChannels is null || dbChannels.Count is 0)
+                return Results.BadRequest(new { Message = "Empty list!" });
+
+            List<GetAllChannelDto> channelDtos = [];
+
+            foreach(var channel in dbChannels)
+            {
+                GetAllChannelDto dto = new GetAllChannelDto(
+                    Id: channel.Id,
+                    ProjectId: channel.Project.Id,
+                    UserId: channel.Project.UserId,
+                    UserProfile: channel.Project.User.ProfilePhoto.URL,
+                    Title: channel.Project.Title
+                        );
+
+                channelDtos.Add(dto);
+            }
+
+
+            return Results.Ok(channelDtos);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Channel: getAll: error: " + ex.Message);
+            return Results.InternalServerError();
+        }
+    }
+
     [HttpGet("{id}")]
     public IResult Get(int id)
     {

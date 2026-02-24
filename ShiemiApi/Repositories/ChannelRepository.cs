@@ -18,8 +18,12 @@ public class ChannelRepository(ApplicationDbContext context)
         .Include(m => m.Messages)!
         .ThenInclude(u => u.User)
         .SingleOrDefault(c => c.Id == id);
+
     public List<Channel> GetAll()
-         => [.. _context.Channels];
+         => _context.Channels.Include(channel => channel.Project)
+         .ThenInclude(project => project.User)
+         .ThenInclude(user => user.ProfilePhoto)
+         .ToList();
 
     public void AddMessage(int channelId, Message message)
     {

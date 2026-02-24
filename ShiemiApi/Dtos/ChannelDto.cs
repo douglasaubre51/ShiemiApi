@@ -15,3 +15,11 @@ public record AddChannelDto(
     int ProjectId,
     int UserId
 );
+
+public record GetAllChannelDto(
+    int Id,
+    int ProjectId,
+    int UserId,
+    string Title,
+    string UserProfile
+        );
