@@ -18,18 +18,18 @@ public class RoomDto
 public record GetPrivateRoomDto(
     int UserId,
     int ProjectId,
-	int DevId,
+    int DevId,
     RoomTypes RoomType
 );
 
 public class GetDevRoomDto
 {
-	public int RoomId { get; set; }
-	public int ClientId { get; set; }
+    public int RoomId { get; set; }
+    public int ClientId { get; set; }
 
-	public string ProfilePhotoURL { get; set; }
-	public string ClientName { get; set; }
-	public RoomTypes RoomType { get; set; } = RoomTypes.DEV;
+    public string ProfilePhotoURL { get; set; }
+    public string ClientName { get; set; }
+    public RoomTypes RoomType { get; set; } = RoomTypes.DEV;
 }
 
 public record GetAllRoomsDto(
@@ -50,4 +50,12 @@ public record GetAllRoomsWithUsersDto(
         string TenantProfileURL,
         int TenantId,
         RoomTypes RoomType
+);
+
+public record GetDevProfileDto(
+    int RoomId,
+    int OwnerId,
+    string OwnerName,
+    string OwnerProfile,
+    int DevId
 );

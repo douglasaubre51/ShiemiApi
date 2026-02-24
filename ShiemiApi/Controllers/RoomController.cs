@@ -78,13 +78,13 @@ public class RoomController(
         try
         {
             var dbRooms = _roomRepository.GetAll();
-            if(dbRooms.Count is 0)
+            if (dbRooms.Count is 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
             List<GetAllRoomsWithUsersDto> dtos = [];
-            foreach(var room in dbRooms)
+            foreach (var room in dbRooms)
             {
-                GetAllRoomsWithUsersDto dto = new (
+                GetAllRoomsWithUsersDto dto = new(
                         room.Id,
                         room.Owner.FirstName + " " + room.Owner.LastName,
                         room.Owner.ProfilePhoto?.URL,
@@ -99,10 +99,10 @@ public class RoomController(
 
             return Results.Ok(dtos);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return Results.InternalServerError(new { Message = ex.Message} );
+            return Results.InternalServerError(new { Message = ex.Message });
         }
     }
 
@@ -112,7 +112,7 @@ public class RoomController(
         try
         {
             var dbRoom = _roomRepository.GetById(id);
-            if(dbRoom is null)
+            if (dbRoom is null)
                 return Results.BadRequest(new { Message = "room doesnt exist!" });
 
             return Results.Ok(new
@@ -123,7 +123,7 @@ public class RoomController(
                 RoomType = dbRoom.RoomType
             });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = "server error!" });
@@ -136,13 +136,13 @@ public class RoomController(
         try
         {
             var dbRooms = _roomRepository.GetAll();
-            if(dbRooms.Count is 0)
+            if (dbRooms.Count is 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
             List<GetAllRoomsDto> dtoList = [];
-            foreach(var r in dbRooms)
+            foreach (var r in dbRooms)
             {
-                GetAllRoomsDto dto = new (
+                GetAllRoomsDto dto = new(
                     RoomId: r.Id,
                     OwnerId: r.Owner.Id,
                     TenantId: r.Tenant.Id,
@@ -155,7 +155,7 @@ public class RoomController(
 
             return Results.Ok(dtoList);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = "server error!" });
@@ -169,13 +169,13 @@ public class RoomController(
         try
         {
             var dbRooms = _roomRepository.GetAll();
-            if(dbRooms.Count is 0)
+            if (dbRooms.Count is 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
             List<GetAllRoomsDto> dtoList = [];
-            foreach(var r in dbRooms)
+            foreach (var r in dbRooms)
             {
-                GetAllRoomsDto dto = new (
+                GetAllRoomsDto dto = new(
                     RoomId: r.Id,
                     OwnerId: r.Owner.Id,
                     TenantId: r.Tenant.Id,
@@ -188,10 +188,52 @@ public class RoomController(
 
             return Results.Ok(dtoList);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = "server error!" });
+        }
+    }
+
+    [HttpGet("Client/{userId}/all")]
+    public IResult GetAllDevProfilesForClient(int userId)
+    {
+        try
+        {
+            var dbRooms = _roomRepository.GetQueryable()
+                .Include(t => t.Owner)
+                .ThenInclude(p => p!.ProfilePhoto)
+                .Include(d => d.Dev)
+                .Where(u => u.Tenant!.Id == userId)
+                .Where(r => r.RoomType == RoomTypes.DEV)
+                .ToList();
+            if (dbRooms.Count is 0)
+            {
+                Console.WriteLine("empty list!");
+                return Results.BadRequest(new { Message = "empty list!" });
+            }
+
+            List<GetDevProfileDto> devProfileDtos = [];
+
+            foreach (var r in dbRooms)
+            {
+                GetDevProfileDto dto = new(
+                    RoomId: r.Id,
+                    OwnerId: r.Owner!.Id,
+                    OwnerProfile: r.Owner.ProfilePhoto!.URL,
+                    OwnerName: r.Owner.FirstName + " " + r.Owner.LastName,
+                    DevId: r.DevId ?? 0
+                );
+
+                devProfileDtos.Add(dto);
+            }
+
+            return Results.Ok(devProfileDtos);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "error fetching dev rooms for current user!" });
         }
     }
 
@@ -222,7 +264,7 @@ public class RoomController(
                     RoomId = r.Id,
                     ClientId = r.Tenant.Id,
                     ProfilePhotoURL = r.Tenant.ProfilePhoto?.URL,
-                    ClientName = r.Tenant.FirstName+" "+ r.Tenant.LastName
+                    ClientName = r.Tenant.FirstName + " " + r.Tenant.LastName
                 };
                 devRoomDtos.Add(dto);
             }
@@ -241,16 +283,16 @@ public class RoomController(
     {
         try
         {
-            var rooms = _roomRepository.GetAllByUserId(userId,projectId);
+            var rooms = _roomRepository.GetAllByUserId(userId, projectId);
             if (rooms.Count < 0)
                 return Results.BadRequest();
 
             var roomListDto = new List<RoomDto>();
             foreach (var r in rooms)
             {
-                if(r.RoomType == RoomTypes.DEV)
+                if (r.RoomType == RoomTypes.DEV)
                     continue;
-                
+
                 var messages = new List<MessageDto>();
                 foreach (var m in r.Messages!)
                 {
@@ -299,9 +341,9 @@ public class RoomController(
             var roomListDto = new List<RoomDto>();
             foreach (var r in rooms)
             {
-                if(r.RoomType == RoomTypes.DEV)
+                if (r.RoomType == RoomTypes.DEV)
                     continue;
-                
+
                 var messages = new List<MessageDto>();
                 foreach (var m in r.Messages!)
                 {
