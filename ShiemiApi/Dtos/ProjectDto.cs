@@ -11,3 +11,10 @@ public class ProjectDto
     public string Description { get; set; } = string.Empty;
     public string? Profile { get; set; }
 }
+
+public record EditProjectDto(
+         int Id,
+         string Title,
+         string ShortDesc,
+         string Description
+        );

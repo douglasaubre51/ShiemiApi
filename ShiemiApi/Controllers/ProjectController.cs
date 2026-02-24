@@ -14,6 +14,44 @@ public class ProjectController(
     private readonly ProjectRepository _projectRepo = projectRepo;
     private readonly RoomRepository _roomRepo = roomRepo;
 
+    [HttpGet("{projectId}/delete")]
+    public IResult DeleteProject(int projectId)
+    {
+        try
+        {
+            _projectRepo.Remove(projectId);
+
+            return Results.Ok();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"DeleteProject post: error: {ex.Message}");
+
+            return Results.InternalServerError();
+        }
+    }
+
+    [HttpPost("edit")]
+    public IResult EditProject(EditProjectDto dto)
+    {
+        try
+        {
+            var dbProject = _projectRepo.GetById(dto.Id);
+            dbProject.Title = dto.Title;
+            dbProject.ShortDesc = dto.ShortDesc;
+            dbProject.Description = dto.Description;
+
+            _projectRepo.Save();
+
+            return Results.Ok();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"EditProject post: error: {ex.Message}");
+            return Results.InternalServerError();
+        }
+    }
+
     [HttpGet("{projectId}/init/invite-list")]
     public IResult InitInviteList(int projectId)
     {
