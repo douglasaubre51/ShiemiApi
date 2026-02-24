@@ -41,6 +41,8 @@ public class RoomRepository(ApplicationDbContext context)
     {
         List<Message> messages = [];
 
+        // Find private room or dev room !
+
         if (RoomTypes.PRIVATE == roomType)
         {
             messages = _context.Rooms
@@ -56,15 +58,14 @@ public class RoomRepository(ApplicationDbContext context)
             messages = _context.Rooms
                 .Include(m => m.Messages)!
                 .ThenInclude(message => message.User)
-                .Where(r => r.Id == id)
-                .Where(r => r.Dev!.Id == projectOrDevId)
-                .Single(r => r.RoomType == roomType)
+                .SingleOrDefault(room => room.Id == id)
                 .Messages!;
         }
 
         if (messages is null)
             return null;
 
+        // Pack messages !
         List<MessageDto> dtoCollection = new();
         foreach (var m in messages!)
         {

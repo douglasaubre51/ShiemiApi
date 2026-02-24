@@ -35,7 +35,6 @@ public class RoomHub(
             Console.WriteLine("project or devId: " + id);
             Console.WriteLine(roomType.ToString());
             var oldMessages = _roomRepo.GetAllMessagesByRoomId(roomId, id, roomType);
-            Console.WriteLine($"no of messages: {oldMessages is null}");
 
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
             await Clients.Caller.SendAsync(
