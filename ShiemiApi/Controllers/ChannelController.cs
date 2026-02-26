@@ -4,11 +4,47 @@ namespace ShiemiApi.Controllers;
 [ApiController]
 public class ChannelController(
     ProjectRepository projectRepo,
-    ChannelRepository channelRepo
+    ChannelRepository channelRepo,
+    UserRepository userRepo
 )
 {
+    private readonly UserRepository _userRepo = userRepo;
     private readonly ProjectRepository _projectRepo = projectRepo;
     private readonly ChannelRepository _channelRepo = channelRepo;
+
+    [HttpGet("{projectId}/user/all")]
+    public IResult GetAllChannelUsers(int projectId)
+    {
+        try
+        {
+            Project dbProject = _projectRepo.GetById(projectId);
+            if (dbProject is null)
+                return Results.BadRequest(new { Message = "Channel doesnt exist!" });
+
+            List<GetAllChannelUserDto> channelDtos = [];
+
+            foreach(var userId in dbProject.UserList)
+            {
+                User dbUser = _userRepo.GetById(userId);
+
+                GetAllChannelUserDto dto = new GetAllChannelUserDto(
+                    UserId: dbUser.Id,
+                    Username: dbUser.FirstName + " " + dbUser.LastName,
+                    Profile: dbUser.ProfilePhoto.URL
+                        );
+
+                channelDtos.Add(dto);
+            }
+
+
+            return Results.Ok(channelDtos);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Channel: getAll: error: " + ex.Message);
+            return Results.InternalServerError();
+        }
+    }
 
     [HttpGet("all")]
     public IResult GetAll()
@@ -27,6 +63,7 @@ public class ChannelController(
                     Id: channel.Id,
                     ProjectId: channel.Project.Id,
                     UserId: channel.Project.UserId,
+                    Username: channel.Project.User.FirstName + " " + channel.Project.User.LastName,
                     UserProfile: channel.Project.User.ProfilePhoto.URL,
                     Title: channel.Project.Title
                         );

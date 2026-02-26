@@ -21,5 +21,12 @@ public record GetAllChannelDto(
     int ProjectId,
     int UserId,
     string Title,
+    string Username,
     string UserProfile
+        );
+
+public record GetAllChannelUserDto(
+        int UserId,
+        string Username,
+        string Profile
         );
