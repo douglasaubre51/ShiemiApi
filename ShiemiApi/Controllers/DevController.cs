@@ -50,7 +50,7 @@ public class DevController(
             {
                 Dev = _userRepo.GetById(userId)!.Dev,
                 PublicId = result.PublicId,
-                URL = result.Url.ToString()
+                URL = result.SecureUrl.ToString()
             };
             _photoRepo.Add(newAdvert);
 
@@ -125,22 +125,23 @@ public class DevController(
             Console.WriteLine(username);
             var devs = _devRepo.SearchByTitle(username);
             Console.WriteLine(devs.Count);
-            if(devs.Count is 0)
+            if (devs.Count is 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
             List<SearchDevDto> dtos = [];
-            foreach(var dev in devs)
+            foreach (var dev in devs)
             {
-                dtos.Add(new SearchDevDto{
-                        DevId = dev.Id,
-                        UserId = dev.UserId,
-                        Username = dev.User.FirstName + " " + dev.User.LastName
-                        });
+                dtos.Add(new SearchDevDto
+                {
+                    DevId = dev.Id,
+                    UserId = dev.UserId,
+                    Username = dev.User.FirstName + " " + dev.User.LastName
+                });
             }
 
             return Results.Ok(dtos);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = $"error: {ex.Message}" });
@@ -178,13 +179,14 @@ public class DevController(
             Console.WriteLine("dev profile url: " + dev.Advert.URL);
             Console.WriteLine("dev shortDesc: " + dev.ShortDesc);
 
-            DevDto dto = new DevDto() {
+            DevDto dto = new DevDto()
+            {
                 Id = dev.Id,
                 UserId = dev.UserId,
                 Advert = dev.Advert.URL,
                 Profile = dev.User.ProfilePhoto.URL,
                 ShortDesc = dev.ShortDesc,
-                Username = dev.User.FirstName +" "+dev.User.LastName,
+                Username = dev.User.FirstName + " " + dev.User.LastName,
                 StartingPrice = dev.StartingPrice
             };
 

@@ -199,13 +199,13 @@ public class UserController(
                 dbUser.ProfilePhoto = new()
                 {
                     PublicId = result.PublicId,
-                    URL = result.Url.ToString()
+                    URL = result.SecureUrl.ToString()
                 };
 
             else
             {
                 dbUser.ProfilePhoto.PublicId = result.PublicId;
-                dbUser.ProfilePhoto.URL = result.Url.ToString();
+                dbUser.ProfilePhoto.URL = result.SecureUrl.ToString();
             }
 
             _userRepo.Update(dbUser);
