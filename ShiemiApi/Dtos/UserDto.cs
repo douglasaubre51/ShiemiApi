@@ -43,4 +43,5 @@ public class GetUserDto
     public string UserId { get; set; } = string.Empty;
     public bool IsDeveloper { get; set; }
     public string ProfilePhotoURL { get; set; } = string.Empty;
+    public bool IsBanned { get; set; }
 }

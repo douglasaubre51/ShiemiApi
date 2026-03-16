@@ -10,6 +10,50 @@ public class UserController(
     private readonly UserRepository _userRepo = userRepo;
     private readonly ImageUtility _imageUtil = imageUtil;
 
+    // un Ban user by userId !
+    [HttpGet("{userId}/un-ban")]
+    public IResult UnBanUser(int userId)
+    {
+        try
+        {
+            var dbUser = _userRepo.GetById(userId);
+            if(dbUser is null)
+                return Results.BadRequest(new { Message = "User does'nt exists!" });
+
+            dbUser.IsBanned = false;
+            _userRepo.Save();
+
+            return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = ex.Message });
+        }
+    }
+
+    // Ban user by userId !
+    [HttpGet("{userId}/ban")]
+    public IResult BanUser(int userId)
+    {
+        try
+        {
+            var dbUser = _userRepo.GetById(userId);
+            if(dbUser is null)
+                return Results.BadRequest(new { Message = "User does'nt exists!" });
+
+            dbUser.IsBanned = true;
+            _userRepo.Save();
+
+            return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = ex.Message });
+        }
+    }
+
     [HttpPost]
     public IResult CreateUser(CreateUserDto dto)
     {
