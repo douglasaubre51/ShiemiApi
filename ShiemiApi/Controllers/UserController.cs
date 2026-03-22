@@ -17,7 +17,7 @@ public class UserController(
         try
         {
             var dbUser = _userRepo.GetById(userId);
-            if(dbUser is null)
+            if (dbUser is null)
                 return Results.BadRequest(new { Message = "User does'nt exists!" });
 
             dbUser.IsBanned = false;
@@ -39,7 +39,7 @@ public class UserController(
         try
         {
             var dbUser = _userRepo.GetById(userId);
-            if(dbUser is null)
+            if (dbUser is null)
                 return Results.BadRequest(new { Message = "User does'nt exists!" });
 
             dbUser.IsBanned = true;
@@ -101,6 +101,27 @@ public class UserController(
         }
     }
 
+    // Gets the optional user details by integer userId!
+    [HttpGet("{userId}/optional-details")]
+    public IResult GetOptionalDetails(int userId)
+    {
+        try
+        {
+            var dbUser = _userRepo.GetById(userId);
+            if (dbUser is null)
+                return Results.BadRequest(new { Message = "User doesnt exist!" });
+
+            Mapper mapper = MapperUtility.Get<User, OptionalUserDetailsDto>();
+            OptionalUserDetailsDto dto = mapper.Map<OptionalUserDetailsDto>(dbUser);
+
+            return Results.Ok(dto);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "Error fetching optional details!" });
+        }
+    }
     // returns user using db integer id !
     [HttpGet("{id}")]
     public IResult GetUser(int id)
@@ -218,39 +239,30 @@ public class UserController(
         }
     }
 
-    [HttpPut]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<IResult> UpdateUser(
-        [FromForm] string id,
-        [FromForm] string firstName,
-        [FromForm] string lastName,
-        [FromForm] IFormFile profilePhoto
-    )
+    // Update user details!
+    [HttpPut("user-details")]
+    public async Task<IResult> UpdateUser(UpdateUserWrapper userWrapper)
     {
         try
         {
-            User dbUser = _userRepo.GetById(int.Parse(id))!;
+            UserDto userDto = userWrapper.UserDto;
+            OptionalUserDetailsDto optionalDetails = userWrapper.OptionalUserDetailsDto;
+
+            User? dbUser = _userRepo.GetById(userDto.Id);
             if (dbUser is null)
-                return Results.BadRequest(new { Message = "user doesnot exists!" });
+                return Results.BadRequest(new { Message = "User doesnot exists!" });
 
-            UploadResult result = _imageUtil.UploadImage(profilePhoto);
-            if (result is null)
-                return Results.BadRequest(new { Message = "failed to upload profile photo!" });
+            dbUser.FirstName = userDto.FirstName;
+            dbUser.LastName = userDto.LastName;
 
-            dbUser.FirstName = firstName;
-            dbUser.LastName = lastName;
-            if (dbUser.ProfilePhoto is null)
-                dbUser.ProfilePhoto = new()
-                {
-                    PublicId = result.PublicId,
-                    URL = result.SecureUrl.ToString()
-                };
+            dbUser.AboutMe = optionalDetails.AboutMe;
+            dbUser.Contact = optionalDetails.Contact;
+            dbUser.Whatsaap = optionalDetails.Whatsaap;
+            dbUser.Gmail = optionalDetails.Gmail;
+            dbUser.LinkedIn = optionalDetails.LinkedIn;
+            dbUser.Github = optionalDetails.Github;
 
-            else
-            {
-                dbUser.ProfilePhoto.PublicId = result.PublicId;
-                dbUser.ProfilePhoto.URL = result.SecureUrl.ToString();
-            }
+            Console.WriteLine(optionalDetails.AboutMe);
 
             _userRepo.Update(dbUser);
             return Results.Ok(new
@@ -262,6 +274,47 @@ public class UserController(
         {
             Console.WriteLine(ex.Message);
             return Results.InternalServerError(new { Message = "error updating user!" });
+        }
+    }
+    [HttpPut("user-profile-photo")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IResult> UpdateUserProfilePhoto(
+        [FromForm] string id,
+        [FromForm] IFormFile profilePhoto
+    )
+    {
+        try
+        {
+            User dbUser = _userRepo.GetById(int.Parse(id))!;
+            if (dbUser is null)
+                return Results.BadRequest(new { Message = "User doesnot exists!" });
+
+            UploadResult result = _imageUtil.UploadImage(profilePhoto);
+            if (result is null)
+                return Results.BadRequest(new { Message = "Failed to upload profile photo!" });
+
+            if (dbUser.ProfilePhoto is null)
+                dbUser.ProfilePhoto = new()
+                {
+                    PublicId = result.PublicId,
+                    URL = result.SecureUrl.ToString()
+                };
+            else
+            {
+                dbUser.ProfilePhoto.PublicId = result.PublicId;
+                dbUser.ProfilePhoto.URL = result.SecureUrl.ToString();
+            }
+            _userRepo.Update(dbUser);
+
+            return Results.Ok(new
+            {
+                Message = "User Profile Photo updated successfully!"
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = "Error updating User Profile Photo!" });
         }
     }
 

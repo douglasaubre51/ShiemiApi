@@ -44,4 +44,27 @@ public class GetUserDto
     public bool IsDeveloper { get; set; }
     public string ProfilePhotoURL { get; set; } = string.Empty;
     public bool IsBanned { get; set; }
+
+    // Optional
+    public string Contact { get; set; } = string.Empty;
+    public string Whatsaap { get; set; } = string.Empty;
+    public string LinkedIn { get; set; } = string.Empty;
+    public string Gmail { get; set; } = string.Empty;
+    public string Github { get; set; } = string.Empty;
+    public string AboutMe { get; set; } = string.Empty;
 }
+
+public class OptionalUserDetailsDto
+{
+    public string Contact { get; set; } = string.Empty;
+    public string Whatsaap { get; set; } = string.Empty;
+    public string LinkedIn { get; set; } = string.Empty;
+    public string Gmail { get; set; } = string.Empty;
+    public string Github { get; set; } = string.Empty;
+    public string AboutMe { get; set; } = string.Empty;
+}
+
+public record UpdateUserWrapper(
+    UserDto UserDto,
+    OptionalUserDetailsDto OptionalUserDetailsDto
+);

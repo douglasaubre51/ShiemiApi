@@ -23,7 +23,7 @@ public class ProjectController(
 
             return Results.Ok();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"DeleteProject post: error: {ex.Message}");
 
@@ -40,12 +40,11 @@ public class ProjectController(
             dbProject.Title = dto.Title;
             dbProject.ShortDesc = dto.ShortDesc;
             dbProject.Description = dto.Description;
-
             _projectRepo.Save();
 
             return Results.Ok();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"EditProject post: error: {ex.Message}");
             return Results.InternalServerError();
@@ -302,14 +301,32 @@ public class ProjectController(
     {
         try
         {
-            var dbProjects = _projectRepo.GetAll();
+            var dbProjects = _projectRepo.GetQueryable()
+            .Include(project => project.Channel)
+            .Include(project => project.User)
+            .ThenInclude(user => user!.ProfilePhoto)
+            .ToList();
+
             if (dbProjects is null)
                 return Results.NotFound();
 
-            Mapper mapper = MapperUtility.Get<Project, ProjectDto>();
-            List<ProjectDto> dtos = mapper.Map<List<ProjectDto>>(dbProjects);
+            List<ProjectDto> projectDtos = [];
+            foreach (var project in dbProjects)
+            {
+                projectDtos.Add(new ProjectDto
+                {
+                    Id = project.Id,
+                    UserId = project.UserId,
+                    ChannelId = project.Channel!.Id,
+                    Title = project.Title,
+                    ShortDesc = project.ShortDesc,
+                    Description = project.Description,
+                    UserProfilePhoto = project.User!.ProfilePhoto!.URL,
+                    Username = project.User.FirstName + " " + project.User.LastName
+                });
+            }
 
-            return Results.Ok(new { Projects = dtos });
+            return Results.Ok(new { Projects = projectDtos });
         }
         catch (Exception ex)
         {
