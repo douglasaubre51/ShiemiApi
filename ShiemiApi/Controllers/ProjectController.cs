@@ -31,15 +31,36 @@ public class ProjectController(
         }
     }
 
+    [HttpGet("{id}/get-tags")]
+    public IResult EditProject(int id)
+    {
+        try
+        {
+            var dbProject = _projectRepo.GetById(id);
+            if (dbProject is null)
+                return Results.BadRequest(new { Message = "Project doesnt exists!" });
+            if (dbProject.ProjectTags is null || dbProject.ProjectTags.Count is 0)
+                return Results.BadRequest(new { Message = "Tags empty!" });
+
+            return Results.Ok(dbProject!.ProjectTags);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"get-tags get: error: {ex.Message}");
+            return Results.InternalServerError();
+        }
+    }
+
     [HttpPost("edit")]
     public IResult EditProject(EditProjectDto dto)
     {
         try
         {
             var dbProject = _projectRepo.GetById(dto.Id);
-            dbProject.Title = dto.Title;
+            dbProject!.Title = dto.Title;
             dbProject.ShortDesc = dto.ShortDesc;
             dbProject.Description = dto.Description;
+            dbProject.ProjectTags = dto.Tags;
             _projectRepo.Save();
 
             return Results.Ok();
@@ -89,6 +110,29 @@ public class ProjectController(
         }
     }
 
+    [HttpGet("{tag}/tag-search")]
+    public IResult GetSearchedProjectsByTags(string tag)
+    {
+        try
+        {
+            var projects = _projectRepo.SearchByTag(tag);
+            if (projects.Count is 0)
+                return Results.BadRequest(new { Message = "empty list!" });
+
+            return Results.Ok(projects.Select(project => new
+            {
+                Id = project.Id,
+                ShortDesc = project.ShortDesc,
+                Title = project.Title,
+                UserId = project.UserId
+            }));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.InternalServerError(new { Message = $"error: {ex.Message}" });
+        }
+    }
     [HttpGet("{title}/search")]
     public IResult GetSearchedProjects(string title)
     {

@@ -11,4 +11,5 @@ public class Dev
     public string ShortDesc { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal StartingPrice { get; set; }
+    public List<string>? DevTags { get; set; } = [];
 }

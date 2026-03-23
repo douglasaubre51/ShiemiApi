@@ -28,9 +28,13 @@ public class ProjectRepository(ApplicationDbContext context)
             .Include(c => c.Channel)
             .SingleOrDefault(p => p.Id == id);
 
+    public List<Project> SearchByTag(string chosentag)
+        => _context.Projects.Include(c => c.Channel)
+        .Where(project => project.ProjectTags!.Any(tag => EF.Functions.Like(tag.ToLower(), $"%{chosentag.ToLower()}")))
+        .ToList();
     public List<Project> SearchByTitle(string title)
         => _context.Projects.Include(c => c.Channel)
-        .Where(project => EF.Functions.Like(project.Title.ToLower(),$"%{title.ToLower()}%"))
+        .Where(project => EF.Functions.Like(project.Title.ToLower(), $"%{title.ToLower()}%"))
         .ToList();
 
     public List<Project> GetAll()

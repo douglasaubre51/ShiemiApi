@@ -18,4 +18,5 @@ public class Project
     public string Profile { get; set; } = string.Empty;
     public DateOnly CreatedAt { get; set; }
     public decimal Cost { get; set; }
+    public List<string>? ProjectTags { get; set; } = [];
 }
