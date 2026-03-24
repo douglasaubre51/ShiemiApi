@@ -116,6 +116,7 @@ public class ProjectController(
         try
         {
             var projects = _projectRepo.SearchByTag(tag);
+            Console.WriteLine("searched tag: " + tag);
             if (projects.Count is 0)
                 return Results.BadRequest(new { Message = "empty list!" });
 
